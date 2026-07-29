@@ -1,0 +1,6 @@
+numpy
+pandas
+scikit-learn
+skl2onnx
+onnxruntime
+opencv-python-headless
