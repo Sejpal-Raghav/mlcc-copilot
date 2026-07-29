@@ -1,6 +1,9 @@
 import * as ort from 'onnxruntime-node';
 import path from 'path';
 
+// Suppress shape mismatch warnings (skl2onnx multi-output regressor quirk)
+ort.env.logLevel = 'error';
+
 let surrogateSession: ort.InferenceSession | null = null;
 let oodSession: ort.InferenceSession | null = null;
 let inspectorSession: ort.InferenceSession | null = null;
