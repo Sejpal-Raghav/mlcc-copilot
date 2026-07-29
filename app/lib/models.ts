@@ -12,11 +12,12 @@ let inspectorSession: ort.InferenceSession | null = null;
 async function initModels() {
     try {
         const modelsDir = path.join(process.cwd(), 'models', 'onnx');
+        const sessionOpts: ort.InferenceSession.SessionOptions = { logSeverityLevel: 3 };
         
         console.log("Loading ONNX models...");
-        surrogateSession = await ort.InferenceSession.create(path.join(modelsDir, 'surrogate.onnx'));
-        oodSession = await ort.InferenceSession.create(path.join(modelsDir, 'ood_checker.onnx'));
-        inspectorSession = await ort.InferenceSession.create(path.join(modelsDir, 'inspector.onnx'));
+        surrogateSession = await ort.InferenceSession.create(path.join(modelsDir, 'surrogate.onnx'), sessionOpts);
+        oodSession = await ort.InferenceSession.create(path.join(modelsDir, 'ood_checker.onnx'), sessionOpts);
+        inspectorSession = await ort.InferenceSession.create(path.join(modelsDir, 'inspector.onnx'), sessionOpts);
         console.log("Models loaded successfully.");
     } catch (err) {
         console.error("Failed to load ONNX models. Server cannot start properly.", err);

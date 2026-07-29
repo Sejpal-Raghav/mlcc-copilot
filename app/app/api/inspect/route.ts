@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { extractFeatures } from '@/lib/features';
 import { inspectImageFeatures } from '@/lib/models';
-import { query } from '@/lib/db';
+import { query, isDbAvailable } from '@/lib/db';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import os from 'os';
@@ -37,11 +37,13 @@ export async function POST(req: NextRequest) {
         // Inspect
         const result = await inspectImageFeatures(features);
 
-        // Save to DB
-        await query(
-            `INSERT INTO inspections (defect, defect_type, confidence) VALUES ($1, $2, $3)`,
-            [result.defect, result.defectType, result.confidence]
-        );
+        // Save to DB (non-blocking)
+        if (isDbAvailable()) {
+            query(
+                `INSERT INTO inspections (defect, defect_type, confidence) VALUES ($1, $2, $3)`,
+                [result.defect, result.defectType, result.confidence]
+            ).catch(err => console.warn('DB write failed (non-fatal):', err.message));
+        }
 
         return NextResponse.json({ ...result, features });
     } catch (err) {
