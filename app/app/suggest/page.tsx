@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Search, AlertCircle, Cpu } from "lucide-react";
 
 export default function SuggestPage() {
   const [loading, setLoading] = useState(false);
@@ -38,49 +39,77 @@ export default function SuggestPage() {
   };
 
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h2 className="text-2xl font-semibold mb-6">Auto-Tune Design</h2>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="col-span-1">
-            <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Target Capacitance (F)</label>
-                <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-9} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" />
-            </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Tolerance (%)</label>
-                <input type="number" name="tolerancePct" step="0.1" required defaultValue={5.0} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" />
-            </div>
-            
-            <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                {loading ? "Searching..." : "Find Candidates"}
-            </button>
-            
-            {error && <div className="text-red-600 mt-2">{error}</div>}
-            </form>
+      {/* Form Column */}
+      <div className="lg:col-span-4 bg-white border border-zinc-200 p-6">
+        <div className="flex items-center gap-2 mb-6 border-b border-zinc-100 pb-4">
+          <Search className="w-4 h-4 text-zinc-900" />
+          <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wide">Inverse Design</h2>
         </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Target Capacitance (F)</label>
+            <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-9} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Tolerance (%)</label>
+            <input type="number" name="tolerancePct" step="0.1" required defaultValue={5.0} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
+          </div>
+          
+          <div className="pt-2">
+            <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-zinc-900 text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">
+              {loading ? "Searching Space..." : "Run Search"}
+            </button>
+          </div>
+          
+          {error && <div className="text-xs text-red-600 bg-red-50 border border-red-200 p-3 flex items-start gap-2 mt-4"><AlertCircle className="w-4 h-4 shrink-0" /> {error}</div>}
+        </form>
+      </div>
 
-        <div className="col-span-2">
-            {candidates.length > 0 && (
+      {/* Results Column */}
+      <div className="lg:col-span-8">
+        <div className="bg-white border border-zinc-200 p-6 h-full flex flex-col">
+          <h3 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-6 border-b border-zinc-100 pb-4">Candidate Parameters</h3>
+          
+          {candidates.length > 0 ? (
             <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900">Top Candidates</h3>
-                {candidates.map((cand, idx) => (
-                    <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between">
-                        <div className="space-y-1">
-                            <div className="font-semibold text-gray-900">Candidate #{idx + 1}</div>
-                            <div className="text-sm text-gray-600">
-                                εᵣ: {cand.epsilon_r.toFixed(1)} | N: {cand.layers} | A: {(cand.area*1e6).toFixed(2)} mm² | d: {(cand.thickness*1e6).toFixed(2)} µm
-                            </div>
-                        </div>
-                        <div className="mt-2 sm:mt-0 text-right">
-                            <div className="text-sm font-mono">{cand.predictedCapacitance.toExponential(4)} F</div>
-                            <div className="text-xs text-green-600">{(cand.distanceToTarget * 100).toFixed(2)}% off target</div>
-                        </div>
+              {candidates.map((cand, idx) => (
+                <div key={idx} className="bg-white border border-zinc-200 flex flex-col sm:flex-row justify-between p-4 transition-all hover:bg-zinc-50">
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center justify-center pr-4 border-r border-zinc-100">
+                      <div className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">Rank</div>
+                      <div className="text-xl font-mono text-zinc-900">0{idx + 1}</div>
                     </div>
-                ))}
+                    <div className="space-y-2 py-1">
+                      <div className="flex gap-4 text-xs font-mono text-zinc-700">
+                        <div><span className="text-zinc-400">εᵣ:</span> {cand.epsilon_r.toFixed(1)}</div>
+                        <div><span className="text-zinc-400">N:</span> {cand.layers}</div>
+                        <div><span className="text-zinc-400">A:</span> {(cand.area * 1e6).toFixed(2)} mm²</div>
+                        <div><span className="text-zinc-400">d:</span> {(cand.thickness * 1e6).toFixed(2)} µm</div>
+                      </div>
+                      <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 flex items-center gap-1">
+                        <Cpu className="w-3 h-3" /> Hardware Spec Candidate
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 sm:mt-0 text-right flex flex-col justify-center">
+                    <div className="text-lg font-mono text-zinc-900">{cand.predictedCapacitance.toExponential(4)} F</div>
+                    <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mt-1">{(cand.distanceToTarget * 100).toFixed(2)}% off target</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            )}
+          ) : (
+            <div className="flex-grow flex items-center justify-center min-h-[300px]">
+              <div className="text-center">
+                <Search className="w-8 h-8 text-zinc-200 mx-auto mb-3" />
+                <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">Waiting for constraints</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

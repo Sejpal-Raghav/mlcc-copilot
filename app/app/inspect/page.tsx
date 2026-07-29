@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Camera, AlertCircle, ScanLine, XCircle, CheckCircle2 } from "lucide-react";
 
 export default function InspectPage() {
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ export default function InspectPage() {
     try {
       const res = await fetch("/api/inspect", {
         method: "POST",
-        body: formData, // fetch automatically sets the correct multipart boundary
+        body: formData,
       });
 
       const resData = await res.json();
@@ -49,54 +50,78 @@ export default function InspectPage() {
   };
 
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h2 className="text-2xl font-semibold mb-6">Automated Visual Inspection</h2>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Form Column */}
+      <div className="lg:col-span-5 bg-white border border-zinc-200 p-6">
+        <div className="flex items-center gap-2 mb-6 border-b border-zinc-100 pb-4">
+          <Camera className="w-4 h-4 text-zinc-900" />
+          <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wide">Automated Optical Inspection</h2>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Upload Component Image</label>
-            <input type="file" name="image" accept="image/jpeg, image/png" onChange={handleFileChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" />
+            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Component Image Feed</label>
+            <input type="file" name="image" accept="image/jpeg, image/png" onChange={handleFileChange} required className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-semibold file:bg-zinc-100 file:text-zinc-900 hover:file:bg-zinc-200 cursor-pointer border border-zinc-200" />
           </div>
           
-          <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-            {loading ? "Analyzing..." : "Inspect"}
-          </button>
+          <div className="pt-2">
+            <button type="submit" disabled={loading} className="w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-zinc-900 text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">
+              {loading ? <><ScanLine className="w-4 h-4 animate-pulse" /> Processing...</> : <><ScanLine className="w-4 h-4" /> Initialize Scan</>}
+            </button>
+          </div>
           
-          {error && <div className="text-red-600 mt-2">{error}</div>}
+          {error && <div className="text-xs text-red-600 bg-red-50 border border-red-200 p-3 flex items-start gap-2 mt-4"><AlertCircle className="w-4 h-4 shrink-0" /> {error}</div>}
         </form>
+      </div>
 
-        <div className="flex flex-col items-center">
+      {/* Results Column */}
+      <div className="lg:col-span-7">
+        <div className="bg-white border border-zinc-200 p-6 h-full flex flex-col">
+          <h3 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-6 border-b border-zinc-100 pb-4">Analysis Terminal</h3>
+          
+          <div className="flex flex-col items-center flex-grow">
             {preview ? (
-                <img src={preview} alt="Preview" className="max-w-full h-auto rounded-lg shadow-md max-h-64 object-contain" />
+                <div className="border border-zinc-200 p-2 bg-zinc-50 w-full flex justify-center mb-6">
+                  <img src={preview} alt="Feed Preview" className="max-w-full h-auto max-h-[300px] object-contain" />
+                </div>
             ) : (
-                <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300">
-                    No image selected
+                <div className="w-full min-h-[300px] bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-6">
+                    <div className="text-center">
+                      <Camera className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
+                      <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">No Image Feed Active</div>
+                    </div>
                 </div>
             )}
 
             {result && (
-            <div className={`mt-6 w-full p-4 rounded-lg border ${result.defect ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
-                <div className="flex items-center mb-2">
-                    <span className={`text-lg font-bold ${result.defect ? 'text-red-800' : 'text-green-800'}`}>
-                        {result.defect ? 'Defect Detected' : 'Pass (Clean)'}
-                    </span>
-                </div>
-                {result.defect && (
-                    <div className="text-red-700 mb-2">
-                        Type: <span className="font-semibold capitalize">{result.defectType}</span>
+            <div className="w-full border border-zinc-200 text-sm">
+                <div className={`p-4 border-b border-zinc-200 flex items-center justify-between ${result.defect ? 'bg-zinc-50' : 'bg-white'}`}>
+                    <div className="flex items-center gap-3">
+                      {result.defect ? <XCircle className="w-5 h-5 text-zinc-900" /> : <CheckCircle2 className="w-5 h-5 text-zinc-900" />}
+                      <span className="font-mono text-zinc-900 uppercase tracking-widest font-semibold">
+                          {result.defect ? 'DEFECT FLAG' : 'CLEARANCE PASS'}
+                      </span>
                     </div>
-                )}
-                <div className="text-sm text-gray-600">
-                    Confidence: {(result.confidence * 100).toFixed(1)}%
+                    <div className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">
+                      CONF: {(result.confidence * 100).toFixed(1)}%
+                    </div>
                 </div>
                 
-                <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
-                    <div className="font-semibold mb-1">Extracted Features:</div>
+                {result.defect && (
+                    <div className="p-4 border-b border-zinc-200 bg-zinc-50">
+                        <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Defect Classification</div>
+                        <div className="text-lg font-mono text-zinc-900 capitalize">{result.defectType}</div>
+                    </div>
+                )}
+                
+                <div className="p-4 bg-zinc-900 text-zinc-300 text-xs font-mono overflow-x-auto">
+                    <div className="text-zinc-500 mb-2">// Raw Extracted Features</div>
                     <pre>{JSON.stringify(result.features, null, 2)}</pre>
                 </div>
             </div>
             )}
+          </div>
         </div>
       </div>
     </div>
