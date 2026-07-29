@@ -81,7 +81,7 @@ def train_and_export_surrogate():
     initial_type = [('float_input', FloatTensorType([None, 4]))]
     
     # Convert Surrogate Model (RF)
-    onnx_surrogate = convert_sklearn(final_model, initial_types=initial_type, target_opset=12)
+    onnx_surrogate = convert_sklearn(final_model, initial_types=initial_type, target_opset={'': 12, 'ai.onnx.ml': 3})
     onnx_surrogate_path = os.path.join(os.path.dirname(__file__), '..', '..', 'app', 'models', 'onnx', 'surrogate.onnx')
     os.makedirs(os.path.dirname(onnx_surrogate_path), exist_ok=True)
     with open(onnx_surrogate_path, "wb") as f:
@@ -89,7 +89,7 @@ def train_and_export_surrogate():
     print(f"\nSaved Surrogate ONNX to {onnx_surrogate_path}")
 
     # Convert Isolation Forest for OOD Check
-    onnx_ood = convert_sklearn(iso, initial_types=initial_type, target_opset=12)
+    onnx_ood = convert_sklearn(iso, initial_types=initial_type, target_opset={'': 12, 'ai.onnx.ml': 3})
     onnx_ood_path = os.path.join(os.path.dirname(__file__), '..', '..', 'app', 'models', 'onnx', 'ood_checker.onnx')
     with open(onnx_ood_path, "wb") as f:
         f.write(onnx_ood.SerializeToString())
