@@ -127,6 +127,20 @@ export default function SuggestPage() {
               </div>
             </div>
           )}
+
+          {candidates.length > 0 && (
+            <div className="mt-6 bg-zinc-50 border border-zinc-200 p-4">
+              <h4 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-700 mb-3">Model Insights (Optimization)</h4>
+              <ul className="text-xs text-zinc-600 leading-relaxed space-y-3">
+                <li>
+                  <strong className="text-zinc-800">Gradient Descent Inverse Design:</strong> Rather than picking random hardware combinations and hoping they work, this tool uses <em>Adam Gradient Descent</em>. It computes numerical gradients via Finite Differences to figure out exactly how to adjust layers, area, and thickness to minimize the error against your target capacitance.
+                </li>
+                <li>
+                  <strong className="text-zinc-800">Operating Conditions Aware:</strong> Because it evaluates candidates using the PINN, the optimization perfectly accounts for the DC Bias and Temperature you specified, guaranteeing the final component hits the target under real-world operating conditions, not just on paper.
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>

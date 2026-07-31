@@ -119,6 +119,18 @@ export default function InspectPage() {
                     <div className="text-zinc-500 mb-2">// Raw Extracted Features</div>
                     <pre>{JSON.stringify(result.features, null, 2)}</pre>
                 </div>
+                
+                <div className="mt-6 bg-zinc-50 border border-zinc-200 p-4 w-full">
+                  <h4 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-700 mb-3">Model Insights (AOI)</h4>
+                  <ul className="text-xs text-zinc-600 leading-relaxed space-y-3">
+                    <li>
+                      <strong className="text-zinc-800">Native Convolutional Neural Network:</strong> This inspection tool uses a custom 3-layer CNN built in PyTorch. Unlike older systems that require manual feature engineering (like edge detection or SIFT), this model learns complex spatial hierarchies directly from raw pixel data.
+                    </li>
+                    <li>
+                      <strong className="text-zinc-800">Direct Classification:</strong> The image is resized to 128x128, converted to grayscale, and fed into the ONNX runtime. The network outputs probabilities for 4 classes: Clean, Scratch, Chip, or Void, allowing for millisecond-latency defect detection right in the application.
+                    </li>
+                  </ul>
+                </div>
             </div>
             )}
           </div>
