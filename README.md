@@ -1,64 +1,48 @@
-# Tecdia Design & Yield Copilot
+# MLCC Copilot
 
-**Tecdia Design & Yield Copilot** is a portfolio project demonstrating an AI-assisted engineering workflow, tailored to the pillars of surrogate modeling and automated visual inspection.
+MLCC Copilot is an advanced AI engineering suite designed to solve the physical constraints of Multi-Layer Ceramic Capacitor (MLCC) manufacturing. It leverages Physics-Informed Neural Networks (PINNs) and Convolutional Neural Networks (CNNs) embedded directly into a Next.js full-stack application using ONNX Runtime.
 
-This tool is built to be a full-stack Next.js application leveraging ONNX Runtime in the backend, utilizing Python only as an offline environment for training models.
+## Core Features
 
-## Features
-
-### 1. Surrogate Modeling (Performance Prediction)
-Replaces slow simulations with an instant performance predictor for a given MLCC design.
-- **Input:** Dielectric constant ($\varepsilon_r$), Layers (N), Area, Thickness.
-- **Output:** Predicted capacitance, resonant frequency, ESR, and a pass/fail spec check.
-- **Why Random Forest & Gradient Boosting:** The synthetic dataset injects a deliberate non-linearity (a derating factor). Trees capture this effectively without the overhead of neural networks.
-- **Out of Distribution (OOD) Check:** The model detects when inputs fall outside the training data distribution, providing a low-confidence warning. (Implemented via `IsolationForest` in ONNX for low latency).
+### 1. Performance Prediction (Forward Physics)
+Replaces slow Finite-Element Analysis (FEA) simulations with a neural surrogate model.
+* **Input:** Dielectric constant, Layers, Area, Thickness, DC Bias, Temperature.
+* **Output:** Predicted capacitance, resonant frequency, Equivalent Series Resistance (ESR), and full impedance spectrum Z(f).
+* **PINN Advantage:** Unlike ideal mathematical formulas, the dataset explicitly captures complex real-world parasitics, domain locking under high voltage, and temperature drift.
 
 ### 2. Auto-Tune (Inverse Design)
-Given a target specification (e.g. target capacitance and tolerance), this feature searches for candidate designs.
-- **How it works:** Rather than training a highly complex inverse model (which struggles with one-to-many mappings in physics), we use the surrogate model as a cheap oracle to evaluate thousands of randomly sampled designs and return the best candidates.
+Given a target capacitance and operating conditions, this feature mathematically finds the exact geometric parameters required.
+* **Optimization Engine:** Uses Adam Gradient Descent via Finite Differences to compute gradients and optimize the input parameters.
+* **Speed:** Finds the optimal physical design in milliseconds without random guessing or Monte Carlo brute force.
 
-### 3. Automated Visual Inspection
-Classifies component images as defective or clean.
-- **Approach:** We use classical Computer Vision feature extraction (OpenCV/sharp: edge density, contour count, area variance) combined with a Gradient Boosting classifier. 
-- **Why Classical CV:** For small datasets, a classical CV pipeline provides highly explainable features (you can see exactly what drove the defect call) and trains in seconds, whereas a CNN would require vastly more data and compute for similar accuracy.
-- **Implementation:** Extraction is prototyped in Python and falls back to a Python subprocess call in Node.js to ensure exact parity.
+### 3. Automated Optical Inspection (AOI)
+Classifies component microscopy imagery as defective or clean.
+* **Vision Model:** A custom 3-layer Convolutional Neural Network trained on 128x128 high-contrast grayscale imagery.
+* **Defect Classes:** Clean, Scratch, Void, and Edge Chip.
+* **Native Inference:** The network detects defects natively from pixel data without requiring brittle manual feature engineering.
 
 ## Tech Stack
 
-- **Model Training (Offline):** Python, `scikit-learn`, `opencv-python`, `skl2onnx`
-- **Model Serving & Backend:** Node.js, `onnxruntime-node`, Next.js API Routes
-- **Frontend:** Next.js (App Router), Tailwind CSS
-- **Database:** PostgreSQL (raw `pg` queries for performance and simplicity)
+* **Model Training (Offline):** Python, PyTorch.
+* **Model Serving:** Node.js, onnxruntime-node.
+* **Frontend:** Next.js (App Router), Tailwind CSS, Recharts.
+* **Optimization:** Custom Adam Optimizer implemented in TypeScript.
 
-## Setup and Running
+## Setup Instructions
 
-1. **Start the Database**
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Start the Next.js App**
+1. **Install Dependencies**
    ```bash
    cd app
    npm install
+   ```
+
+2. **Run the Development Server**
+   ```bash
    npm run dev
    ```
 
-3. **Offline Training (Optional)**
-   If you wish to regenerate the models:
+3. **Production Build**
    ```bash
-   cd training
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   python data/generate_dataset.py
-   python models/train_surrogate.py
-   python data/generate_images.py
-   python models/extract_features.py
+   npm run build
+   npm start
    ```
-
-## Design Decisions and Trade-offs
-
-- **Next.js + ONNX over FastAPI:** Switching to a single Node.js backend running ONNX models simplifies the deployment architecture, moving Python purely to the offline training phase.
-- **Synthetic Data:** The datasets are synthetic and generated procedurally using physics-grounded formulas and explicit noise injection. This provides full control over ground truth for a 5-day project without scraping messy or proprietary data.
-- **Raw `pg` over Prisma:** Using a raw `pg` client with parameterized queries provides exactly the required functionality without introducing the complexity of an ORM.
