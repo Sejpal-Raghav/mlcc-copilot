@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Activity, AlertCircle, CheckCircle2 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PredictPage() {
   const [loading, setLoading] = useState(false);
@@ -118,7 +119,48 @@ export default function PredictPage() {
               </div>
             </div>
             
-            <div className="mt-8 pt-6 border-t border-zinc-200 flex items-center justify-between">
+            <div className="mt-8">
+              <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-2">Impedance Spectrum Z(f)</div>
+              <div className="h-48 border border-zinc-100 bg-zinc-50/50 p-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={result.impedanceCurve} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+                    <XAxis 
+                      dataKey="freq" 
+                      scale="log" 
+                      domain={['dataMin', 'dataMax']} 
+                      type="number"
+                      tickFormatter={(val) => {
+                        if (val >= 1e9) return (val / 1e9) + 'G';
+                        if (val >= 1e6) return (val / 1e6) + 'M';
+                        if (val >= 1e3) return (val / 1e3) + 'k';
+                        return val;
+                      }}
+                      tick={{ fontSize: 10, fill: '#71717a' }}
+                      axisLine={{ stroke: '#e4e4e7' }}
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      scale="log" 
+                      domain={['auto', 'auto']} 
+                      type="number"
+                      tickFormatter={(val) => val.toExponential(1)}
+                      tick={{ fontSize: 10, fill: '#71717a' }}
+                      axisLine={{ stroke: '#e4e4e7' }}
+                      tickLine={false}
+                    />
+                    <Tooltip 
+                      contentStyle={{ fontSize: '12px', border: '1px solid #e4e4e7', borderRadius: '4px', boxShadow: 'none' }}
+                      labelFormatter={(val) => `Frequency: ${(val as number).toExponential(2)} Hz`}
+                      formatter={(val: any) => [val ? Number(val).toExponential(4) + ' Ω' : '', 'Impedance']}
+                    />
+                    <Line type="monotone" dataKey="z" stroke="#18181b" strokeWidth={2} dot={false} isAnimationActive={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-zinc-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Model Confidence</div>
                 {result.confidence === 'high' ? (

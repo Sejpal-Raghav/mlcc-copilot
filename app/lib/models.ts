@@ -33,6 +33,7 @@ export interface PredictPerformanceResult {
     passFail: boolean;
     marginPct: number;
     confidence: 'high' | 'low';
+    impedanceCurve: Array<{ freq: number; z: number }>;
 }
 
 export async function predictPerformance(
@@ -77,13 +78,34 @@ export async function predictPerformance(
         marginPct = tolerancePct - deviationPct;
     }
     
+    // Generate Impedance Curve Z(f)
+    // ESL = 1 / ((2 * pi * f_res)^2 * C)
+    const esl = 1.0 / (Math.pow(2 * Math.PI * freq, 2) * cap);
+    const impedanceCurve = [];
+    
+    // Log sweep from 1 kHz to 1 GHz (60 points)
+    const numPoints = 60;
+    const minFreqLog = Math.log10(1e3);
+    const maxFreqLog = Math.log10(1e9);
+    for (let i = 0; i <= numPoints; i++) {
+        const fLog = minFreqLog + (maxFreqLog - minFreqLog) * (i / numPoints);
+        const f = Math.pow(10, fLog);
+        
+        const xl = 2 * Math.PI * f * esl;
+        const xc = 1 / (2 * Math.PI * f * cap);
+        const z = Math.sqrt(Math.pow(esr, 2) + Math.pow(xl - xc, 2));
+        
+        impedanceCurve.push({ freq: f, z: z });
+    }
+    
     return {
         capacitance: cap,
         resonantFrequency: freq,
         esr: esr,
         passFail,
         marginPct,
-        confidence
+        confidence,
+        impedanceCurve
     };
 }
 
