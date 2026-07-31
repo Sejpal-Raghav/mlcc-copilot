@@ -25,8 +25,8 @@ async function initModels() {
     }
 }
 
-// Call init on module load
-initModels();
+// Export promise so consumers can await model loading
+export const modelsReady = initModels();
 
 export interface PredictPerformanceResult {
     capacitance: number;
@@ -41,6 +41,7 @@ export async function predictPerformance(
     epsilon_r: number, layers: number, area: number, thickness: number, 
     targetCapacitance?: number, tolerancePct?: number
 ): Promise<PredictPerformanceResult> {
+    await modelsReady;
     if (!surrogateSession || !oodSession) {
         throw new Error("Models not loaded");
     }
@@ -90,6 +91,7 @@ export async function predictPerformance(
 export async function batchPredictCapacitance(
     inputs: Array<[number, number, number, number]>
 ): Promise<Float32Array> {
+    await modelsReady;
     if (!surrogateSession) {
         throw new Error("Surrogate model not loaded");
     }
@@ -116,6 +118,7 @@ export async function batchPredictCapacitance(
 }
 
 export async function inspectImageCNN(floatArray: Float32Array) {
+    await modelsReady;
     if (!inspectorSession) {
         throw new Error("Inspector model not loaded");
     }
