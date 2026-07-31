@@ -51,7 +51,7 @@ export default function SuggestPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Target Capacitance (F)</label>
-            <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-9} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
+            <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-7} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
           </div>
           <div>
             <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Tolerance (%)</label>
