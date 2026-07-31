@@ -1,0 +1,1142 @@
+
+pytorch
+2.13.0+cpu:¸‹
+â
+features
+pinn.feat_meansubnode_sub"SubJT
+	namespaceG: __main__.train_and_export.<locals>.ExportWrapper/sub: aten.sub.TensorJi
+pkg.torch.onnx.class_hierarchyG['__main__.train_and_export.<locals>.ExportWrapper', 'aten.sub.Tensor']Jë
+pkg.torch.onnx.fx_nodew%sub : [num_users=1] = call_function[target=torch.ops.aten.sub.Tensor](args = (%x_raw, %b_pinn_feat_mean), kwargs = {})J)
+pkg.torch.onnx.name_scopes['', 'sub']Jÿ
+pkg.torch.onnx.stack_traceπFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 223, in forward
+    x_scaled = (x_raw - self.pinn.feat_mean) / self.pinn.feat_scale
+Ñ
+sub
+pinn.feat_scaledivnode_div"DivJT
+	namespaceG: __main__.train_and_export.<locals>.ExportWrapper/div: aten.div.TensorJi
+pkg.torch.onnx.class_hierarchyG['__main__.train_and_export.<locals>.ExportWrapper', 'aten.div.Tensor']Jê
+pkg.torch.onnx.fx_nodev%div : [num_users=2] = call_function[target=torch.ops.aten.div.Tensor](args = (%sub, %b_pinn_feat_scale), kwargs = {})J)
+pkg.torch.onnx.name_scopes['', 'div']Jÿ
+pkg.torch.onnx.stack_traceπFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 223, in forward
+    x_scaled = (x_raw - self.pinn.feat_mean) / self.pinn.feat_scale
+—
+div
+pinn.feat_scalemul_4
+node_mul_4"MulJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_4: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jí
+pkg.torch.onnx.fx_nodex%mul_4 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%div, %b_pinn_feat_scale), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_4']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 74, in forward
+    x_raw = x_scaled * self.feat_scale + self.feat_mean
+”
+mul_4
+pinn.feat_meanadd_9
+node_add_9"AddJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/add_9: aten.add.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.add.Tensor']Jì
+pkg.torch.onnx.fx_nodey%add_9 : [num_users=4] = call_function[target=torch.ops.aten.add.Tensor](args = (%mul_4, %b_pinn_feat_mean), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'add_9']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 74, in forward
+    x_raw = x_scaled * self.feat_scale + self.feat_mean
+∏
+add_9
+val_0selectnode_select"Gather*
+axis†Jo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/select: aten.select.intJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.select.int']Jâ
+pkg.torch.onnx.fx_nodeo%select : [num_users=2] = call_function[target=torch.ops.aten.select.int](args = (%slice_1, 1, 0), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'select']J 
+pkg.torch.onnx.stack_trace´File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 76, in forward
+    epsilon_r = x_raw[:, 0]
+¿
+add_9
+val_22select_1node_select_1"Gather*
+axis†Jq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/select_1: aten.select.intJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.select.int']Jã
+pkg.torch.onnx.fx_nodeq%select_1 : [num_users=3] = call_function[target=torch.ops.aten.select.int](args = (%slice_2, 1, 1), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'pinn', 'select_1']J«
+pkg.torch.onnx.stack_trace®File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 77, in forward
+    layers = x_raw[:, 1]
+æ
+add_9
+val_33select_2node_select_2"Gather*
+axis†Jq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/select_2: aten.select.intJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.select.int']Jã
+pkg.torch.onnx.fx_nodeq%select_2 : [num_users=3] = call_function[target=torch.ops.aten.select.int](args = (%slice_3, 1, 2), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'pinn', 'select_2']J≈
+pkg.torch.onnx.stack_trace¶File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 78, in forward
+    area = x_raw[:, 2]
+√
+add_9
+val_44select_3node_select_3"Gather*
+axis†Jq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/select_3: aten.select.intJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.select.int']Jã
+pkg.torch.onnx.fx_nodeq%select_3 : [num_users=2] = call_function[target=torch.ops.aten.select.int](args = (%slice_4, 1, 3), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'pinn', 'select_3']J 
+pkg.torch.onnx.stack_trace´File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 79, in forward
+    thickness = x_raw[:, 3]
+“
+select
+val_45mul_25node_mul_25"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_25: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jç
+pkg.torch.onnx.fx_nodes%mul_25 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%select, 8.854e-12), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_25']JÓ
+pkg.torch.onnx.stack_traceœFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 82, in forward
+    c_ideal = EPSILON_0 * epsilon_r * area * layers / thickness
+‘
+mul_25
+select_2mul_27node_mul_27"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_27: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jç
+pkg.torch.onnx.fx_nodes%mul_27 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%mul_25, %select_2), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_27']JÓ
+pkg.torch.onnx.stack_traceœFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 82, in forward
+    c_ideal = EPSILON_0 * epsilon_r * area * layers / thickness
+‘
+mul_27
+select_1mul_29node_mul_29"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_29: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jç
+pkg.torch.onnx.fx_nodes%mul_29 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%mul_27, %select_1), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_29']JÓ
+pkg.torch.onnx.stack_traceœFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 82, in forward
+    c_ideal = EPSILON_0 * epsilon_r * area * layers / thickness
+œ
+mul_29
+select_3div_1
+node_div_1"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_1: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jå
+pkg.torch.onnx.fx_noder%div_1 : [num_users=3] = call_function[target=torch.ops.aten.div.Tensor](args = (%mul_29, %select_3), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_1']JÓ
+pkg.torch.onnx.stack_traceœFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 82, in forward
+    c_ideal = EPSILON_0 * epsilon_r * area * layers / thickness
+ß
+select_2sqrt	node_sqrt"SqrtJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/sqrt: aten.sqrt.defaultJÄ
+pkg.torch.onnx.class_hierarchy^['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.sqrt.default']JÖ
+pkg.torch.onnx.fx_nodek%sqrt : [num_users=1] = call_function[target=torch.ops.aten.sqrt.default](args = (%select_2,), kwargs = {})J2
+pkg.torch.onnx.name_scopes['', 'pinn', 'sqrt']J”
+pkg.torch.onnx.stack_trace¥File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 85, in forward
+    electrode_len = torch.sqrt(area)
+˜
+sqrt
+sqrt_1div_2
+node_div_2"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_2: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jà
+pkg.torch.onnx.fx_noden%div_2 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%sqrt, %sqrt_1), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_2']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+˛
+div_2
+val_46mul_34node_mul_34"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_34: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jä
+pkg.torch.onnx.fx_nodep%mul_34 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%div_2, 1.5e-09), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_34']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+Å
+select_1
+val_47mul_36node_mul_36"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_36: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jä
+pkg.torch.onnx.fx_nodep%mul_36 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%select_1, 0.05), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_36']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+ô
+mul_36
+scalar_tensor_defaultdiv_3
+node_div_3"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_3: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jô
+pkg.torch.onnx.fx_node%div_3 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%mul_36, %scalar_tensor_default), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_3']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+°
+div_3
+scalar_tensor_default_1add_51node_add_51"AddJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/add_51: aten.add.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.add.Tensor']Jú
+pkg.torch.onnx.fx_nodeÅ%add_51 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%div_3, %scalar_tensor_default_1), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'add_51']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+Ä
+mul_34
+add_51mul_40node_mul_40"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_40: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jã
+pkg.torch.onnx.fx_nodeq%mul_40 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%mul_34, %add_51), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_40']Jû
+pkg.torch.onnx.stack_traceˇFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 86, in forward
+    esl_ideal = 0.5e-9 + 1.5e-9 * (electrode_len / torch.sqrt(torch.tensor(25e-6))) * (1 + 0.05 * layers / 100)
+‘
+div_1
+mul_40mul_43node_mul_43"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_43: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jä
+pkg.torch.onnx.fx_nodep%mul_43 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%div_1, %add_56), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_43']JÙ
+pkg.torch.onnx.stack_trace’File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 87, in forward
+    f_res_ideal = 1.0 / (2 * np.pi * torch.sqrt(c_ideal * esl_ideal))
+Œ
+mul_43sqrt_2node_sqrt_2"SqrtJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/sqrt_2: aten.sqrt.defaultJÄ
+pkg.torch.onnx.class_hierarchy^['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.sqrt.default']JÖ
+pkg.torch.onnx.fx_nodek%sqrt_2 : [num_users=1] = call_function[target=torch.ops.aten.sqrt.default](args = (%mul_43,), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'sqrt_2']JÙ
+pkg.torch.onnx.stack_trace’File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 87, in forward
+    f_res_ideal = 1.0 / (2 * np.pi * torch.sqrt(c_ideal * esl_ideal))
+‡
+sqrt_2
+val_50mul_46node_mul_46"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_46: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jï
+pkg.torch.onnx.fx_node{%mul_46 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%sqrt_2, 6.283185307179586), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_46']JÙ
+pkg.torch.onnx.stack_trace’File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 87, in forward
+    f_res_ideal = 1.0 / (2 * np.pi * torch.sqrt(c_ideal * esl_ideal))
+˙
+mul_46
+reciprocalnode_reciprocal"
+ReciprocalJ{
+	namespacen: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/reciprocal: aten.reciprocal.defaultJÜ
+pkg.torch.onnx.class_hierarchyd['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.reciprocal.default']Jè
+pkg.torch.onnx.fx_nodeu%reciprocal : [num_users=1] = call_function[target=torch.ops.aten.reciprocal.default](args = (%mul_46,), kwargs = {})J8
+pkg.torch.onnx.name_scopes['', 'pinn', 'reciprocal']JÙ
+pkg.torch.onnx.stack_trace’File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 87, in forward
+    f_res_ideal = 1.0 / (2 * np.pi * torch.sqrt(c_ideal * esl_ideal))
+Œ
+select_1
+val_52mul_51node_mul_51"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_51: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jã
+pkg.torch.onnx.fx_nodeq%mul_51 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%select_1, 2e-08), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_51']JÍ
+pkg.torch.onnx.stack_traceÀFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 91, in forward
+    r_electrode = rho_electrode * layers / area * thickness
+À
+mul_51
+select_2div_4
+node_div_4"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_4: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jå
+pkg.torch.onnx.fx_noder%div_4 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%mul_51, %select_2), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_4']JÍ
+pkg.torch.onnx.stack_traceÀFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 91, in forward
+    r_electrode = rho_electrode * layers / area * thickness
+Œ
+div_4
+select_3mul_54node_mul_54"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_54: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jå
+pkg.torch.onnx.fx_noder%mul_54 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%div_4, %select_3), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_54']JÍ
+pkg.torch.onnx.stack_traceÀFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 91, in forward
+    r_electrode = rho_electrode * layers / area * thickness
+Î
+select
+scalar_tensor_default_2sub_33node_sub_33"SubJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/sub_33: aten.sub.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.sub.Tensor']Jù
+pkg.torch.onnx.fx_nodeÇ%sub_33 : [num_users=1] = call_function[target=torch.ops.aten.sub.Tensor](args = (%select, %scalar_tensor_default_2), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'sub_33']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 92, in forward
+    tan_delta = 0.001 + 0.02 * (epsilon_r - 500) / 9500
+≈
+sub_33
+val_54mul_57node_mul_57"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_57: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jà
+pkg.torch.onnx.fx_noden%mul_57 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%sub_33, 0.02), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_57']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 92, in forward
+    tan_delta = 0.001 + 0.02 * (epsilon_r - 500) / 9500
+Ê
+mul_57
+scalar_tensor_default_3div_5
+node_div_5"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_5: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jú
+pkg.torch.onnx.fx_nodeÅ%div_5 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%mul_57, %scalar_tensor_default_3), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_5']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 92, in forward
+    tan_delta = 0.001 + 0.02 * (epsilon_r - 500) / 9500
+ƒ
+div_5
+val_56add_81node_add_81"AddJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/add_81: aten.add.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.add.Tensor']Jà
+pkg.torch.onnx.fx_noden%add_81 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%div_5, 0.001), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'add_81']JÊ
+pkg.torch.onnx.stack_trace«File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 92, in forward
+    tan_delta = 0.001 + 0.02 * (epsilon_r - 500) / 9500
+”
+div_1
+val_57mul_61node_mul_61"MulJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/mul_61: aten.mul.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.mul.Tensor']Jî
+pkg.torch.onnx.fx_nodez%mul_61 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%div_1, 6283185.307179586), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'mul_61']JÈ
+pkg.torch.onnx.stack_trace File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 93, in forward
+    r_dielectric = tan_delta / (2 * np.pi * 1e6 * c_ideal)
+∆
+add_81
+mul_61div_6
+node_div_6"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_6: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jä
+pkg.torch.onnx.fx_nodep%div_6 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%add_81, %mul_61), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_6']JÈ
+pkg.torch.onnx.stack_trace File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 93, in forward
+    r_dielectric = tan_delta / (2 * np.pi * 1e6 * c_ideal)
+π
+mul_54
+div_6add_88node_add_88"AddJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/add_88: aten.add.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.add.Tensor']Jä
+pkg.torch.onnx.fx_nodep%add_88 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%mul_54, %div_6), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'add_88']JŸ
+pkg.torch.onnx.stack_trace∫File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 94, in forward
+    esr_ideal = r_electrode + r_dielectric
+ü
+div_1val_58node_Log_58"LogJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']JÑ
+pkg.torch.onnx.fx_nodej%log10 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%div_1,), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10']J»
+pkg.torch.onnx.stack_trace©File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 98, in forward
+    torch.log10(c_ideal),
+¶
+val_58
+val_61log10
+node_log10"DivJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']JÑ
+pkg.torch.onnx.fx_nodej%log10 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%div_1,), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10']J»
+pkg.torch.onnx.stack_trace©File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 98, in forward
+    torch.log10(c_ideal),
+Ø
+
+reciprocalval_62node_Log_62"LogJs
+	namespacef: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10_1: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']Já
+pkg.torch.onnx.fx_nodem%log10_1 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%mul_49,), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10_1']JÃ
+pkg.torch.onnx.stack_trace≠File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 99, in forward
+    torch.log10(f_res_ideal),
+µ
+val_62
+val_61log10_1node_log10_1"DivJs
+	namespacef: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10_1: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']Já
+pkg.torch.onnx.fx_nodem%log10_1 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%mul_49,), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10_1']JÃ
+pkg.torch.onnx.stack_trace≠File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 99, in forward
+    torch.log10(f_res_ideal),
+©
+add_88val_65node_Log_65"LogJs
+	namespacef: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10_2: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']Já
+pkg.torch.onnx.fx_nodem%log10_2 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%add_88,), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10_2']J 
+pkg.torch.onnx.stack_trace´File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 100, in forward
+    torch.log10(esr_ideal)
+≥
+val_65
+val_61log10_2node_log10_2"DivJs
+	namespacef: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/log10_2: aten.log10.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.log10.default']Já
+pkg.torch.onnx.fx_nodem%log10_2 : [num_users=1] = call_function[target=torch.ops.aten.log10.default](args = (%add_88,), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pinn', 'log10_2']J 
+pkg.torch.onnx.stack_trace´File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 100, in forward
+    torch.log10(esr_ideal)
+ÿ
+log10
+val_68val_69node_Unsqueeze_69"	UnsqueezeJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/stack: aten.stack.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.stack.default']Jù
+pkg.torch.onnx.fx_nodeÇ%stack : [num_users=1] = call_function[target=torch.ops.aten.stack.default](args = ([%log10, %log10_1, %log10_2], 1), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'stack']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 97, in forward
+    targets_ideal_log = torch.stack([
+⁄
+log10_1
+val_68val_71node_Unsqueeze_71"	UnsqueezeJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/stack: aten.stack.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.stack.default']Jù
+pkg.torch.onnx.fx_nodeÇ%stack : [num_users=1] = call_function[target=torch.ops.aten.stack.default](args = ([%log10, %log10_1, %log10_2], 1), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'stack']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 97, in forward
+    targets_ideal_log = torch.stack([
+⁄
+log10_2
+val_68val_73node_Unsqueeze_73"	UnsqueezeJq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/stack: aten.stack.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.stack.default']Jù
+pkg.torch.onnx.fx_nodeÇ%stack : [num_users=1] = call_function[target=torch.ops.aten.stack.default](args = ([%log10, %log10_1, %log10_2], 1), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'stack']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 97, in forward
+    targets_ideal_log = torch.stack([
+„
+val_69
+val_71
+val_73stack
+node_stack"Concat*
+axis†Jq
+	namespaced: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/stack: aten.stack.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.stack.default']Jù
+pkg.torch.onnx.fx_nodeÇ%stack : [num_users=1] = call_function[target=torch.ops.aten.stack.default](args = ([%log10, %log10_1, %log10_2], 1), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'stack']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 97, in forward
+    targets_ideal_log = torch.stack([
+Ô
+stack
+pinn.tgt_meansub_45node_sub_45"SubJo
+	namespaceb: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/sub_45: aten.sub.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.sub.Tensor']Jì
+pkg.torch.onnx.fx_nodey%sub_45 : [num_users=1] = call_function[target=torch.ops.aten.sub.Tensor](args = (%stack, %b_pinn_tgt_mean), kwargs = {})J4
+pkg.torch.onnx.name_scopes['', 'pinn', 'sub_45']Jˇ
+pkg.torch.onnx.stack_trace‡File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 104, in forward
+    targets_ideal_scaled = (targets_ideal_log - self.tgt_mean) / self.tgt_scale
+Ó
+sub_45
+pinn.tgt_scalediv_7
+node_div_7"DivJn
+	namespacea: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/div_7: aten.div.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.div.Tensor']Jî
+pkg.torch.onnx.fx_nodez%div_7 : [num_users=1] = call_function[target=torch.ops.aten.div.Tensor](args = (%sub_45, %b_pinn_tgt_scale), kwargs = {})J3
+pkg.torch.onnx.name_scopes['', 'pinn', 'div_7']Jˇ
+pkg.torch.onnx.stack_trace‡File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 104, in forward
+    targets_ideal_scaled = (targets_ideal_log - self.tgt_mean) / self.tgt_scale
+‚	
+div
+pinn.mlp.0.weight
+pinn.mlp.0.biaslinearnode_linear"Gemm*
+transA †*
+transB†*
+alpha  Ä?†*
+beta  Ä?†Jü
+	namespaceë: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.0: torch.nn.modules.linear.Linear/linear: aten.linear.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.linear.Linear', 'aten.linear.default']JÆ
+pkg.torch.onnx.fx_nodeì%linear : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%div, %p_pinn_mlp_0_weight, %p_pinn_mlp_0_bias), kwargs = {})JB
+pkg.torch.onnx.name_scopes$['', 'pinn', 'pinn.mlp.0', 'linear']Jù
+pkg.torch.onnx.stack_trace˛File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 112, in forward
+    x_out = self.mlp[0](mlp_features)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+”
+linearval_74node_Sigmoid_74"SigmoidJù
+	namespaceè: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.1: torch.nn.modules.activation.SiLU/silu: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']JÉ
+pkg.torch.onnx.fx_nodei%silu : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear,), kwargs = {})J@
+pkg.torch.onnx.name_scopes"['', 'pinn', 'pinn.mlp.1', 'silu']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 113, in forward
+    x_out = self.mlp[1](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+œ
+linear
+val_74silu	node_silu"MulJù
+	namespaceè: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.1: torch.nn.modules.activation.SiLU/silu: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']JÉ
+pkg.torch.onnx.fx_nodei%silu : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear,), kwargs = {})J@
+pkg.torch.onnx.name_scopes"['', 'pinn', 'pinn.mlp.1', 'silu']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 113, in forward
+    x_out = self.mlp[1](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+Í	
+silu
+pinn.mlp.2.weight
+pinn.mlp.2.biaslinear_1node_linear_1"Gemm*
+transA †*
+transB†*
+alpha  Ä?†*
+beta  Ä?†J°
+	namespaceì: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.2: torch.nn.modules.linear.Linear/linear_1: aten.linear.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J¥
+pkg.torch.onnx.fx_nodeô%linear_1 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%clone_1, %p_pinn_mlp_2_weight, %p_pinn_mlp_2_bias), kwargs = {})JD
+pkg.torch.onnx.name_scopes&['', 'pinn', 'pinn.mlp.2', 'linear_1']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 115, in forward
+    x_out = self.mlp[2](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+›
+linear_1val_75node_Sigmoid_75"SigmoidJü
+	namespaceë: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.3: torch.nn.modules.activation.SiLU/silu_1: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']Já
+pkg.torch.onnx.fx_nodem%silu_1 : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear_1,), kwargs = {})JB
+pkg.torch.onnx.name_scopes$['', 'pinn', 'pinn.mlp.3', 'silu_1']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 116, in forward
+    x_out = self.mlp[3](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+›
+linear_1
+val_75silu_1node_silu_1"MulJü
+	namespaceë: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.3: torch.nn.modules.activation.SiLU/silu_1: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']Já
+pkg.torch.onnx.fx_nodem%silu_1 : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear_1,), kwargs = {})JB
+pkg.torch.onnx.name_scopes$['', 'pinn', 'pinn.mlp.3', 'silu_1']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 116, in forward
+    x_out = self.mlp[3](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+Ï	
+silu_1
+pinn.mlp.4.weight
+pinn.mlp.4.biaslinear_2node_linear_2"Gemm*
+transA †*
+transB†*
+alpha  Ä?†*
+beta  Ä?†J°
+	namespaceì: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.4: torch.nn.modules.linear.Linear/linear_2: aten.linear.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J¥
+pkg.torch.onnx.fx_nodeô%linear_2 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%clone_2, %p_pinn_mlp_4_weight, %p_pinn_mlp_4_bias), kwargs = {})JD
+pkg.torch.onnx.name_scopes&['', 'pinn', 'pinn.mlp.4', 'linear_2']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 118, in forward
+    x_out = self.mlp[4](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+›
+linear_2val_76node_Sigmoid_76"SigmoidJü
+	namespaceë: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.5: torch.nn.modules.activation.SiLU/silu_2: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']Já
+pkg.torch.onnx.fx_nodem%silu_2 : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear_2,), kwargs = {})JB
+pkg.torch.onnx.name_scopes$['', 'pinn', 'pinn.mlp.5', 'silu_2']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 119, in forward
+    x_out = self.mlp[5](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+›
+linear_2
+val_76silu_2node_silu_2"MulJü
+	namespaceë: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.5: torch.nn.modules.activation.SiLU/silu_2: aten.silu.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.activation.SiLU', 'aten.silu.default']Já
+pkg.torch.onnx.fx_nodem%silu_2 : [num_users=1] = call_function[target=torch.ops.aten.silu.default](args = (%linear_2,), kwargs = {})JB
+pkg.torch.onnx.name_scopes$['', 'pinn', 'pinn.mlp.5', 'silu_2']Jñ
+pkg.torch.onnx.stack_trace˜File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 119, in forward
+    x_out = self.mlp[5](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\activation.py", line 475, in forward
+    return F.silu(input, inplace=self.inplace)
+ı	
+silu_2
+pinn.mlp.6.weight
+pinn.mlp.6.biaslinear_3node_linear_3"Gemm*
+transA †*
+transB†*
+alpha  Ä?†*
+beta  Ä?†J°
+	namespaceì: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/pinn.mlp.6: torch.nn.modules.linear.Linear/linear_3: aten.linear.defaultJ•
+pkg.torch.onnx.class_hierarchyÇ['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J≥
+pkg.torch.onnx.fx_nodeò%linear_3 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%silu_2, %p_pinn_mlp_6_weight, %p_pinn_mlp_6_bias), kwargs = {})JD
+pkg.torch.onnx.name_scopes&['', 'pinn', 'pinn.mlp.6', 'linear_3']J†
+pkg.torch.onnx.stack_traceÅFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 120, in forward
+    residual_scaled = self.mlp[6](x_out)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+Œ
+div_7
+linear_3add_133node_add_133"AddJp
+	namespacec: __main__.train_and_export.<locals>.ExportWrapper/pinn: __main__.MLCCPINN/add_133: aten.add.TensorJ~
+pkg.torch.onnx.class_hierarchy\['__main__.train_and_export.<locals>.ExportWrapper', '__main__.MLCCPINN', 'aten.add.Tensor']Jç
+pkg.torch.onnx.fx_nodes%add_133 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%div_7, %linear_3), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pinn', 'add_133']JÂ
+pkg.torch.onnx.stack_trace∆File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 226, in forward
+    y_scaled = self.pinn(x_scaled)
+  File "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 124, in forward
+    y_scaled = targets_ideal_scaled + residual_scaled
+ï
+add_133
+pinn.tgt_scalemul_94node_mul_94"MulJW
+	namespaceJ: __main__.train_and_export.<locals>.ExportWrapper/mul_94: aten.mul.TensorJi
+pkg.torch.onnx.class_hierarchyG['__main__.train_and_export.<locals>.ExportWrapper', 'aten.mul.Tensor']Jñ
+pkg.torch.onnx.fx_node|%mul_94 : [num_users=1] = call_function[target=torch.ops.aten.mul.Tensor](args = (%add_133, %b_pinn_tgt_scale), kwargs = {})J,
+pkg.torch.onnx.name_scopes['', 'mul_94']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 229, in forward
+    y_log = y_scaled * self.pinn.tgt_scale + self.pinn.tgt_mean
+ñ
+mul_94
+pinn.tgt_meanadd_140node_add_140"AddJX
+	namespaceK: __main__.train_and_export.<locals>.ExportWrapper/add_140: aten.add.TensorJi
+pkg.torch.onnx.class_hierarchyG['__main__.train_and_export.<locals>.ExportWrapper', 'aten.add.Tensor']Jï
+pkg.torch.onnx.fx_node{%add_140 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%mul_94, %b_pinn_tgt_mean), kwargs = {})J-
+pkg.torch.onnx.name_scopes['', 'add_140']J‘
+pkg.torch.onnx.stack_traceµFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 229, in forward
+    y_log = y_scaled * self.pinn.tgt_scale + self.pinn.tgt_mean
+‰
+val_77
+add_140predictions
+node_pow_1"PowJV
+	namespaceI: __main__.train_and_export.<locals>.ExportWrapper/pow_1: aten.pow.ScalarJi
+pkg.torch.onnx.class_hierarchyG['__main__.train_and_export.<locals>.ExportWrapper', 'aten.pow.Scalar']Jà
+pkg.torch.onnx.fx_noden%pow_1 : [num_users=1] = call_function[target=torch.ops.aten.pow.Scalar](args = (10.0, %add_140), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'pow_1']J∑
+pkg.torch.onnx.stack_traceòFile "C:\Users\Raghav Sejpal\Documents\antigravity\jolly-hypatia\training\models\train_pinn.py", line 232, in forward
+    y_raw = torch.pow(10.0, y_log)
+main_graph*`@Bpinn.mlp.0.weightj$
+locationpinn_surrogate.onnx.dataj
+offset384j
+length1536p*ò@Bpinn.mlp.0.biasJÄÂ◊TægóΩæhÕ&?'ñæ"¯Ûæk›ê=aE˛>‘¸5?S≈ø˚Ù#=ü\≠>?h—>ÃEø¥ê!ø¥~ øñl%?Bﬂølø¬G±æY¨ç>K ˜æå¥ÍæB_…=ö∫aæYº[>|ä>øFC:ê?æJÛøf›ìæs—ø%ÕÒ>Z7–æ•{_>ÏXﬂ>¸ñ#>IÇΩ∞/ø
+≠3øCè$>?eæ√\æY&OæR<&ø˝¿Ω‡?ﬂ3?‰≤'?À„?<iæ∆ç?€¢ ?fùæ˜CºøqíøPù?ê!æ«È°>Zá»>ıÅ=KˇdΩP‰?Øø>*ò@Bpinn.mlp.2.biasJÄﬁj!æí[dΩsÊÙΩ√®<;Ãæ∆lûΩÊ]'Ωh_Í=à0=Í√>ëœΩ@fH>äë‡<2X;>y≤(=bﬁΩ'êZæ›±Ω~>÷iõ=ùÊæÎJàΩ¸çæÓqçæ;Ç©=U…u=˘3æ2û=!Ìî=ËpΩJËÿΩ¯á=[–#æ!,æﬁ“…=5C>˙ Ú=UØTæ{väæÇyD=d+>•üæÑ=9æ‰^º)>sÅ-æà`A=nŸOæÂÏ”<YZ><	Ä=r†Iæ¿'æí(<W”ëº%ÓΩ!∂œ=y¯à=ﬂ	æQqÿΩ^ËhΩh^∏º’œ=§Å=*ò Bpinn.mlp.4.biasJÄMÈ“ª¬c[<¸D=ÒYR>µ6>kº‘ºr[=>6bÄ=Ú»ô=±b¿ΩÔ2ÍΩ6„≠=cØû=ë‘“Ω°2=ı<ì=ôÔâΩÌ	èº≈5=4ûÁ=Üô=(ª}ªH«êΩñ ΩÚ)µΩ´•Ω˚75ºÀÚ>QÒAæ/û:=ıôΩ€ßì>*] Bpinn.mlp.6.weightj$
+locationpinn_surrogate.onnx.dataj
+offset0j
+length384p*#Bpinn.mlp.6.biasJTiØª≠V∫fùè∫*.Bpinn.feat_meanJñπ£Em’~C®¯6≤‚S7åÆ«Aa+B*/Bpinn.feat_scaleJ∂	+E?°C´√÷6tGW7HgAYá>B*!Bpinn.tgt_meanJ¸ˇ©¿µµ…@‰Ò`¿*"Bpinn.tgt_scaleJ ≠D?¥Sÿ>ˇ4?*c@@Bpinn.mlp.2.weightj$
+locationpinn_surrogate.onnx.dataj
+offset10112j
+length16384p*a @Bpinn.mlp.4.weightj$
+locationpinn_surrogate.onnx.dataj
+offset1920j
+length8192p*Bsqrt_1J
+◊£;*Bscalar_tensor_defaultJ  »B*!Bscalar_tensor_default_1J  Ä?*!Bscalar_tensor_default_2J  ˙C*!Bscalar_tensor_default_3J pF*Bval_61Jé]@*Bval_77J   A*Bval_0J        *Bval_22J       *Bval_33J       *Bval_44J       *Bval_45Jﬂ¬-*Bval_46Jè(Œ0*Bval_47JÕÃL=*Bval_50J€…@*Bval_52JwÃ´2*Bval_54J
+◊£<*Bval_56JoÉ:*Bval_57JcøøJ*Bval_68J       ZŒ
+features
+
+
+batch_size
+"=
+/pkg.torch.export.graph_signature.InputSpec.kind
+USER_INPUT"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"*
+!pkg.torch.onnx.original_node_namex_rawbî
+predictions
+
+
+batch_size
+"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT"*
+!pkg.torch.onnx.original_node_namepow_1j⁄
+pinn.mlp.0.weight
+
+@
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_pinn_mlp_0_weightj“
+pinn.mlp.0.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_pinn_mlp_0_biasj“
+pinn.mlp.2.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_pinn_mlp_2_biasj“
+pinn.mlp.4.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_pinn_mlp_4_biasj⁄
+pinn.mlp.6.weight
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_pinn_mlp_6_weightj“
+pinn.mlp.6.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_pinn_mlp_6_biasjÕ
+pinn.feat_mean
+
+
+"9
+/pkg.torch.export.graph_signature.InputSpec.kindBUFFER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentTrue"5
+!pkg.torch.onnx.original_node_nameb_pinn_feat_meanjœ
+pinn.feat_scale
+
+
+"9
+/pkg.torch.export.graph_signature.InputSpec.kindBUFFER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentTrue"6
+!pkg.torch.onnx.original_node_nameb_pinn_feat_scalejÀ
+pinn.tgt_mean
+
+
+"9
+/pkg.torch.export.graph_signature.InputSpec.kindBUFFER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentTrue"4
+!pkg.torch.onnx.original_node_nameb_pinn_tgt_meanjÕ
+pinn.tgt_scale
+
+
+"9
+/pkg.torch.export.graph_signature.InputSpec.kindBUFFER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentTrue"5
+!pkg.torch.onnx.original_node_nameb_pinn_tgt_scalej⁄
+pinn.mlp.2.weight
+
+@
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_pinn_mlp_2_weightj⁄
+pinn.mlp.4.weight
+
+ 
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_pinn_mlp_4_weightj[
+sqrt_1
+ "I
+$pkg.onnxscript.optimizer.folded_from!['clone', 'pinn.lifted_tensor_0']jS
+scalar_tensor_default
+ "2
+$pkg.onnxscript.optimizer.folded_from
+['val_48']jU
+scalar_tensor_default_1
+ "2
+$pkg.onnxscript.optimizer.folded_from
+['val_22']jU
+scalar_tensor_default_2
+ "2
+$pkg.onnxscript.optimizer.folded_from
+['val_53']jU
+scalar_tensor_default_3
+ "2
+$pkg.onnxscript.optimizer.folded_from
+['val_55']jN
+val_61
+ "<
+$pkg.onnxscript.optimizer.folded_from['val_59', 'val_60']jD
+val_77
+ "2
+$pkg.onnxscript.optimizer.folded_from
+['val_59']j
+val_0
+ j
+val_22
+ j
+val_33
+ j
+val_44
+ j
+val_45
+ j
+val_46
+ j
+val_47
+ j
+val_50
+ j
+val_52
+ j
+val_54
+ j
+val_56
+ j
+val_57
+ j
+val_68
+
+
+j
+sub
+
+
+batch_size
+j
+div
+
+
+batch_size
+j!
+mul_4
+
+
+batch_size
+j!
+add_9
+
+
+batch_size
+j
+select
+
+
+batch_sizej 
+select_1
+
+
+batch_sizej 
+select_2
+
+
+batch_sizej 
+select_3
+
+
+batch_sizej
+mul_25
+
+
+batch_sizej
+mul_27
+
+
+batch_sizej
+mul_29
+
+
+batch_sizej
+div_1
+
+
+batch_sizej
+sqrt
+
+
+batch_sizej
+div_2
+
+
+batch_sizej
+mul_34
+
+
+batch_sizej
+mul_36
+
+
+batch_sizej
+div_3
+
+
+batch_sizej
+add_51
+
+
+batch_sizej
+mul_40
+
+
+batch_sizej
+mul_43
+
+
+batch_sizej
+sqrt_2
+
+
+batch_sizej
+mul_46
+
+
+batch_sizej"
+
+reciprocal
+
+
+batch_sizej
+mul_51
+
+
+batch_sizej
+div_4
+
+
+batch_sizej
+mul_54
+
+
+batch_sizej
+sub_33
+
+
+batch_sizej
+mul_57
+
+
+batch_sizej
+div_5
+
+
+batch_sizej
+add_81
+
+
+batch_sizej
+mul_61
+
+
+batch_sizej
+div_6
+
+
+batch_sizej
+add_88
+
+
+batch_sizej
+val_58
+
+
+batch_sizej
+log10
+
+
+batch_sizej
+val_62
+
+
+batch_sizej
+log10_1
+
+
+batch_sizej
+val_65
+
+
+batch_sizej
+log10_2
+
+
+batch_sizej"
+val_69
+
+
+batch_size
+j"
+val_71
+
+
+batch_size
+j"
+val_73
+
+
+batch_size
+j!
+stack
+
+
+batch_size
+j"
+sub_45
+
+
+batch_size
+j!
+div_7
+
+
+batch_size
+j"
+linear
+
+
+batch_size
+@j"
+val_74
+
+
+batch_size
+@j 
+silu
+
+
+batch_size
+@j$
+linear_1
+
+
+batch_size
+@j"
+val_75
+
+
+batch_size
+@j"
+silu_1
+
+
+batch_size
+@j$
+linear_2
+
+
+batch_size
+ j"
+val_76
+
+
+batch_size
+ j"
+silu_2
+
+
+batch_size
+ j$
+linear_3
+
+
+batch_size
+j#
+add_133
+
+
+batch_size
+j"
+mul_94
+
+
+batch_size
+j#
+add_140
+
+
+batch_size
+Ç˘
+0pkg.torch.export.ExportedProgram.graph_signatureƒ
+# inputs
+p_pinn_mlp_0_weight: PARAMETER target='pinn.mlp.0.weight'
+p_pinn_mlp_0_bias: PARAMETER target='pinn.mlp.0.bias'
+p_pinn_mlp_2_weight: PARAMETER target='pinn.mlp.2.weight'
+p_pinn_mlp_2_bias: PARAMETER target='pinn.mlp.2.bias'
+p_pinn_mlp_4_weight: PARAMETER target='pinn.mlp.4.weight'
+p_pinn_mlp_4_bias: PARAMETER target='pinn.mlp.4.bias'
+p_pinn_mlp_6_weight: PARAMETER target='pinn.mlp.6.weight'
+p_pinn_mlp_6_bias: PARAMETER target='pinn.mlp.6.bias'
+b_pinn_feat_mean: BUFFER target='pinn.feat_mean' persistent=True
+b_pinn_feat_scale: BUFFER target='pinn.feat_scale' persistent=True
+b_pinn_tgt_mean: BUFFER target='pinn.tgt_mean' persistent=True
+b_pinn_tgt_scale: BUFFER target='pinn.tgt_scale' persistent=True
+c_pinn_lifted_tensor_0: CONSTANT_TENSOR target='pinn.lifted_tensor_0'
+x_raw: USER_INPUT
+
+# outputs
+pow_1: USER_OUTPUT
+ÇJ
+2pkg.torch.export.ExportedProgram.range_constraints{s20: VR[0, int_oo]}B
+ 

@@ -18,6 +18,8 @@ export default function SuggestPage() {
     const data = {
       targetCapacitance: parseFloat(formData.get("targetCapacitance") as string),
       tolerancePct: parseFloat(formData.get("tolerancePct") as string),
+      v_bias: parseFloat(formData.get("v_bias") as string),
+      temperature: parseFloat(formData.get("temperature") as string),
     };
 
     try {
@@ -53,10 +55,25 @@ export default function SuggestPage() {
             <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Target Capacitance (F)</label>
             <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-7} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
           </div>
-          <div>
-            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Tolerance (%)</label>
-            <input type="number" name="tolerancePct" step="0.1" required defaultValue={5.0} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
-          </div>
+            <div>
+              <label htmlFor="tolerancePct" className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">Tolerance (%)</label>
+              <input id="tolerancePct" type="number" name="tolerancePct" step="0.1" required defaultValue={5.0} className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-sm font-mono text-zinc-900 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors" />
+            </div>
+            
+            {/* Operating Conditions */}
+            <div className="pt-2 border-t border-zinc-100">
+              <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold mb-3">Operating Conditions</div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="v_bias" className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">DC Bias (V)</label>
+                  <input id="v_bias" type="number" name="v_bias" step="0.1" required defaultValue={5.0} className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-sm font-mono text-zinc-900 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="temperature" className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">Temp (°C)</label>
+                  <input id="temperature" type="number" name="temperature" step="0.1" required defaultValue={25.0} className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-sm font-mono text-zinc-900 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors" />
+                </div>
+              </div>
+            </div>
           
           <div className="pt-2">
             <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-zinc-900 text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">

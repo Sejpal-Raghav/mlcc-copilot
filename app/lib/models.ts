@@ -4,8 +4,7 @@ import path from 'path';
 // Suppress shape mismatch warnings (skl2onnx multi-output regressor quirk)
 ort.env.logLevel = 'error';
 
-let surrogateSession: ort.InferenceSession | null = null;
-let oodSession: ort.InferenceSession | null = null;
+let pinnSession: ort.InferenceSession | null = null;
 let inspectorSession: ort.InferenceSession | null = null;
 
 // Initialize models once at module scope
@@ -15,8 +14,7 @@ async function initModels() {
         const sessionOpts: ort.InferenceSession.SessionOptions = { logSeverityLevel: 3 };
         
         console.log("Loading ONNX models...");
-        surrogateSession = await ort.InferenceSession.create(path.join(modelsDir, 'surrogate.onnx'), sessionOpts);
-        oodSession = await ort.InferenceSession.create(path.join(modelsDir, 'ood_checker.onnx'), sessionOpts);
+        pinnSession = await ort.InferenceSession.create(path.join(modelsDir, 'pinn_surrogate.onnx'), sessionOpts);
         inspectorSession = await ort.InferenceSession.create(path.join(modelsDir, 'inspector.onnx'), sessionOpts);
         console.log("Models loaded successfully.");
     } catch (err) {
@@ -39,30 +37,36 @@ export interface PredictPerformanceResult {
 
 export async function predictPerformance(
     epsilon_r: number, layers: number, area: number, thickness: number, 
+    v_bias: number, temperature: number,
     targetCapacitance?: number, tolerancePct?: number
 ): Promise<PredictPerformanceResult> {
     await modelsReady;
-    if (!surrogateSession || !oodSession) {
+    if (!pinnSession) {
         throw new Error("Models not loaded");
     }
 
-    const inputData = Float32Array.from([epsilon_r, layers, area, thickness]);
-    const tensor = new ort.Tensor('float32', inputData, [1, 4]);
+    const inputData = Float32Array.from([epsilon_r, layers, area, thickness, v_bias, temperature]);
+    const tensor = new ort.Tensor('float32', inputData, [1, 6]);
     
     // Surrogate prediction
-    const feeds = { float_input: tensor };
-    const results = await surrogateSession.run(feeds);
-    const outputData = results[surrogateSession.outputNames[0]].data as Float32Array;
+    const feeds = { features: tensor };
+    const results = await pinnSession.run(feeds);
+    const outputData = results[pinnSession.outputNames[0]].data as Float32Array;
     
     const cap = outputData[0];
     const freq = outputData[1];
     const esr = outputData[2];
     
-    // OOD prediction
-    const oodResults = await oodSession.run(feeds);
-    // IsolationForest in scikit-learn outputs 1 for inliers, -1 for outliers
-    const oodLabel = oodResults[oodSession.outputNames[0]].data[0];
-    const confidence = oodLabel === -1 ? 'low' : 'high';
+    // Simple physical bounds check for OOD since we didn't export with dropout
+    let confidence: 'high' | 'low' = 'high';
+    if (epsilon_r < 500 || epsilon_r > 10000 ||
+        layers < 10 || layers > 500 ||
+        area < 1e-6 || area > 25e-6 ||
+        thickness < 1e-6 || thickness > 50e-6 ||
+        v_bias < 0 || v_bias > 50 ||
+        temperature < -40 || temperature > 125) {
+        confidence = 'low';
+    }
     
     let passFail = false;
     let marginPct = 0;
@@ -89,25 +93,27 @@ export async function predictPerformance(
  * Skips OOD check entirely — irrelevant for candidate ranking.
  */
 export async function batchPredictCapacitance(
-    inputs: Array<[number, number, number, number]>
+    inputs: Array<[number, number, number, number, number, number]>
 ): Promise<Float32Array> {
     await modelsReady;
-    if (!surrogateSession) {
+    if (!pinnSession) {
         throw new Error("Surrogate model not loaded");
     }
 
     const n = inputs.length;
-    const flat = new Float32Array(n * 4);
+    const flat = new Float32Array(n * 6);
     for (let i = 0; i < n; i++) {
-        flat[i * 4 + 0] = inputs[i][0];
-        flat[i * 4 + 1] = inputs[i][1];
-        flat[i * 4 + 2] = inputs[i][2];
-        flat[i * 4 + 3] = inputs[i][3];
+        flat[i * 6 + 0] = inputs[i][0];
+        flat[i * 6 + 1] = inputs[i][1];
+        flat[i * 6 + 2] = inputs[i][2];
+        flat[i * 6 + 3] = inputs[i][3];
+        flat[i * 6 + 4] = inputs[i][4];
+        flat[i * 6 + 5] = inputs[i][5];
     }
 
-    const tensor = new ort.Tensor('float32', flat, [n, 4]);
-    const results = await surrogateSession.run({ float_input: tensor });
-    const outputData = results[surrogateSession.outputNames[0]].data as Float32Array;
+    const tensor = new ort.Tensor('float32', flat, [n, 6]);
+    const results = await pinnSession.run({ features: tensor });
+    const outputData = results[pinnSession.outputNames[0]].data as Float32Array;
 
     // Output shape is [n, 3] (cap, freq, esr). Extract just capacitance (index 0 of each row).
     const capacitances = new Float32Array(n);

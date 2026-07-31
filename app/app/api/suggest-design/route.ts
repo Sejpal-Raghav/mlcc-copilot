@@ -27,10 +27,12 @@ function clamp(val: number, min: number, max: number) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { targetCapacitance, tolerancePct } = body;
+        const { targetCapacitance, tolerancePct, v_bias = 0, temperature = 25 } = body;
 
         if (typeof targetCapacitance !== 'number' || targetCapacitance <= 0 ||
-            typeof tolerancePct !== 'number' || tolerancePct <= 0) {
+            typeof tolerancePct !== 'number' || tolerancePct <= 0 ||
+            typeof v_bias !== 'number' || v_bias < 0 ||
+            typeof temperature !== 'number') {
             return NextResponse.json({ error: "Invalid target parameters" }, { status: 400 });
         }
 
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
         // We sample in LOG SPACE because the parameter combinations span
         // 3 orders of magnitude. Linear sampling misses extreme targets.
 
-        const inputs: Array<[number, number, number, number]> = [];
+        const inputs: Array<[number, number, number, number, number, number]> = [];
         const params: Array<{ epsilon_r: number; layers: number; area: number; thickness: number }> = [];
         const perStrategy = Math.floor(NUM_CANDIDATES / 3);
 
@@ -53,7 +55,7 @@ export async function POST(req: NextRequest) {
             const d = clamp(idealD * randRange(0.85, 1.15), BOUNDS.thickness.min, BOUNDS.thickness.max);
 
             if (Math.abs(d - idealD) / idealD > 0.5) continue;
-            inputs.push([epsilon_r, layers, area, d]);
+            inputs.push([epsilon_r, layers, area, d, v_bias, temperature]);
             params.push({ epsilon_r, layers, area, thickness: d });
         }
 
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest) {
             const area = clamp(idealA * randRange(0.85, 1.15), BOUNDS.area.min, BOUNDS.area.max);
 
             if (Math.abs(area - idealA) / idealA > 0.5) continue;
-            inputs.push([epsilon_r, layers, area, thickness]);
+            inputs.push([epsilon_r, layers, area, thickness, v_bias, temperature]);
             params.push({ epsilon_r, layers, area, thickness });
         }
 
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest) {
             const layers = Math.floor(clamp(idealN * randRange(0.85, 1.15), BOUNDS.layers.min, BOUNDS.layers.max));
 
             if (Math.abs(layers - idealN) / idealN > 0.5) continue;
-            inputs.push([epsilon_r, layers, area, thickness]);
+            inputs.push([epsilon_r, layers, area, thickness, v_bias, temperature]);
             params.push({ epsilon_r, layers, area, thickness });
         }
 
