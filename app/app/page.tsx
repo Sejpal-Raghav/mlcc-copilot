@@ -160,6 +160,21 @@ export default function PredictPage() {
               </div>
             </div>
             
+            <div className="mt-6 bg-zinc-50 border border-zinc-200 p-4">
+              <h4 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-700 mb-3">Model Insights (PINN)</h4>
+              <ul className="text-xs text-zinc-600 leading-relaxed space-y-3">
+                <li>
+                  <strong className="text-zinc-800">Why the V-Shaped Curve?</strong> The graph shows how impedance changes with frequency. At low frequencies, it acts as a capacitor (impedance drops). The minimum point is the <em>Resonant Frequency</em>, where parasitic inductance (ESL) cancels capacitance. At higher frequencies, the ESL dominates and it acts like an inductor (impedance rises).
+                </li>
+                <li>
+                  <strong className="text-zinc-800">Physical Derating:</strong> Try increasing the DC Bias or changing the Temperature. The PINN has learned real-world physics: high-K ceramics lose capacitance under high electric fields (voltage derating) and drift with temperature. A traditional formula would miss this entirely.
+                </li>
+                <li>
+                  <strong className="text-zinc-800">Under the Hood:</strong> The model combines a hard-coded <em>Physics Branch</em> (computing ideal $C = \epsilon_0 \epsilon_r A N / d$) with a neural network <em>Residual Branch</em> that predicts the non-ideal deviations based on 50,000 simulated physics samples.
+                </li>
+              </ul>
+            </div>
+            
             <div className="mt-6 pt-6 border-t border-zinc-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Model Confidence</div>
