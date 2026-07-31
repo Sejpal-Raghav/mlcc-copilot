@@ -82,6 +82,39 @@ export async function predictPerformance(
     };
 }
 
+/**
+ * Batch inference: runs a single ONNX forward pass for N inputs.
+ * Returns only capacitance values (for search ranking).
+ * Skips OOD check entirely — irrelevant for candidate ranking.
+ */
+export async function batchPredictCapacitance(
+    inputs: Array<[number, number, number, number]>
+): Promise<Float32Array> {
+    if (!surrogateSession) {
+        throw new Error("Surrogate model not loaded");
+    }
+
+    const n = inputs.length;
+    const flat = new Float32Array(n * 4);
+    for (let i = 0; i < n; i++) {
+        flat[i * 4 + 0] = inputs[i][0];
+        flat[i * 4 + 1] = inputs[i][1];
+        flat[i * 4 + 2] = inputs[i][2];
+        flat[i * 4 + 3] = inputs[i][3];
+    }
+
+    const tensor = new ort.Tensor('float32', flat, [n, 4]);
+    const results = await surrogateSession.run({ float_input: tensor });
+    const outputData = results[surrogateSession.outputNames[0]].data as Float32Array;
+
+    // Output shape is [n, 3] (cap, freq, esr). Extract just capacitance (index 0 of each row).
+    const capacitances = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+        capacitances[i] = outputData[i * 3];
+    }
+    return capacitances;
+}
+
 export async function inspectImageFeatures(features: number[]) {
     if (!inspectorSession) {
         throw new Error("Inspector model not loaded");
