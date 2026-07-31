@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Activity, Cpu, Search } from "lucide-react";
+import { Activity, Cpu, Search, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,7 +30,7 @@ export default function RootLayout({
               </div>
               <nav className="flex space-x-1">
                 <Link href="/" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors">
-                  <Activity className="w-3.5 h-3.5" /> Home
+                  <LayoutGrid className="w-3.5 h-3.5" /> Overview
                 </Link>
                 <Link href="/predict" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors">
                   <Activity className="w-3.5 h-3.5" /> Predict
