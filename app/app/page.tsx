@@ -170,7 +170,7 @@ export default function PredictPage() {
                   <strong className="text-zinc-800">Physical Derating:</strong> Try increasing the DC Bias or changing the Temperature. The PINN has learned real-world physics: high-K ceramics lose capacitance under high electric fields (voltage derating) and drift with temperature. A traditional formula would miss this entirely.
                 </li>
                 <li>
-                  <strong className="text-zinc-800">Under the Hood:</strong> The model combines a hard-coded <em>Physics Branch</em> (computing ideal C = ε₀ εᵣ A N / d) with a neural network <em>Residual Branch</em> that predicts the non-ideal deviations based on 50,000 simulated physics samples.
+                  <strong className="text-zinc-800">Under the Hood:</strong> The model combines a hard-coded <em>Physics Branch</em> (computing ideal <code className="bg-zinc-200/50 px-1.5 py-0.5 rounded font-mono text-[10px] text-zinc-800 tracking-wider">C = ε₀ · εᵣ · A · N / d</code>) with a neural network <em>Residual Branch</em> that predicts the non-ideal deviations based on 50,000 simulated physics samples.
                 </li>
               </ul>
             </div>
