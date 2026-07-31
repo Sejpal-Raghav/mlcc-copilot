@@ -124,9 +124,11 @@ export async function inspectImageFeatures(features: number[]) {
     const tensor = new ort.Tensor('float32', inputData, [1, 4]);
     const feeds = { float_input: tensor };
     
-    const results = await inspectorSession.run(feeds);
+    // Only fetch the label output (index 0). 
+    // Fetching the probabilities output (index 1) crashes onnxruntime-node because 
+    // skl2onnx exports it as a Sequence of Maps, which is an unsupported non-tensor type.
+    const results = await inspectorSession.run(feeds, [inspectorSession.outputNames[0]]);
     const labelData = results[inspectorSession.outputNames[0]].data;
-    const probs = results[inspectorSession.outputNames[1]].data as any; // Usually a tensor of probabilities
     
     const defectClasses = ["clean", "scratch", "chip", "void"];
     const predictedClassIdx = Number(labelData[0]);
