@@ -154,7 +154,7 @@ export default function PredictPage() {
                       labelFormatter={(val) => `Frequency: ${(val as number).toExponential(2)} Hz`}
                       formatter={(val: any) => [val ? Number(val).toExponential(4) + ' Ω' : '', 'Impedance']}
                     />
-                    <Line type="monotone" dataKey="z" stroke="#18181b" strokeWidth={2} dot={false} isAnimationActive={false} />
+                    <Line type="monotone" dataKey="z" stroke="#18181b" strokeWidth={2} dot={false} isAnimationActive={true} animationDuration={1000} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
