@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { inspectImageCNN } from '@/lib/models';
-import { query, isDbAvailable } from '@/lib/db';
+
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import os from 'os';
@@ -43,13 +43,7 @@ export async function POST(req: NextRequest) {
         // Inspect using CNN
         const result = await inspectImageCNN(floatArray);
 
-        // Save to DB (non-blocking)
-        if (isDbAvailable()) {
-            query(
-                `INSERT INTO inspections (defect, defect_type, confidence) VALUES ($1, $2, $3)`,
-                [result.defect, result.defectType, result.confidence]
-            ).catch(err => console.warn('DB write failed (non-fatal):', err.message));
-        }
+
 
         return NextResponse.json(result);
     } catch (err) {
