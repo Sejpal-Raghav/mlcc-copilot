@@ -115,28 +115,35 @@ export async function batchPredictCapacitance(
     return capacitances;
 }
 
-export async function inspectImageFeatures(features: number[]) {
+export async function inspectImageCNN(floatArray: Float32Array) {
     if (!inspectorSession) {
         throw new Error("Inspector model not loaded");
     }
     
-    const inputData = Float32Array.from(features);
-    const tensor = new ort.Tensor('float32', inputData, [1, 4]);
+    // The CNN expects shape [1, 1, 128, 128]
+    const tensor = new ort.Tensor('float32', floatArray, [1, 1, 128, 128]);
     const feeds = { float_input: tensor };
     
-    // Only fetch the label output (index 0). 
-    // Fetching the probabilities output (index 1) crashes onnxruntime-node because 
-    // skl2onnx exports it as a Sequence of Maps, which is an unsupported non-tensor type.
-    const results = await inspectorSession.run(feeds, [inspectorSession.outputNames[0]]);
-    const labelData = results[inspectorSession.outputNames[0]].data;
+    const results = await inspectorSession.run(feeds);
+    const probsData = results[inspectorSession.outputNames[0]].data as Float32Array;
+    
+    // Find the max probability
+    let maxProb = -1;
+    let predictedClassIdx = -1;
+    for (let i = 0; i < probsData.length; i++) {
+        if (probsData[i] > maxProb) {
+            maxProb = probsData[i];
+            predictedClassIdx = i;
+        }
+    }
     
     const defectClasses = ["clean", "scratch", "chip", "void"];
-    const predictedClassIdx = Number(labelData[0]);
     const defectType = defectClasses[predictedClassIdx];
     
     return {
         defect: defectType !== 'clean',
         defectType: defectType === 'clean' ? null : defectType,
-        confidence: 0.95 // Simplified since ONNX probabilities struct can be complex to parse depending on opset
+        confidence: maxProb,
+        features: ["Using CNN Pixel Inference - No manual features"]
     };
 }

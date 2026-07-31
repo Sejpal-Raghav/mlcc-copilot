@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractFeatures } from '@/lib/features';
-import { inspectImageFeatures } from '@/lib/models';
+import { inspectImageCNN } from '@/lib/models';
 import { query, isDbAvailable } from '@/lib/db';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import os from 'os';
+import sharp from 'sharp';
 
 export async function POST(req: NextRequest) {
     try {
@@ -27,15 +27,21 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Save buffer temporarily to pass to python script
-        const tempPath = path.join(os.tmpdir(), `upload_${Date.now()}_${file.name}`);
-        await writeFile(tempPath, buffer);
+        // Process image directly in Node.js using sharp
+        const { data } = await sharp(buffer)
+            .resize(128, 128, { fit: 'fill' })
+            .grayscale()
+            .raw()
+            .toBuffer({ resolveWithObject: true });
 
-        // Extract features
-        const features = await extractFeatures(tempPath);
+        // Convert to Float32Array and normalize to [0, 1]
+        const floatArray = new Float32Array(128 * 128);
+        for (let i = 0; i < data.length; i++) {
+            floatArray[i] = data[i] / 255.0;
+        }
 
-        // Inspect
-        const result = await inspectImageFeatures(features);
+        // Inspect using CNN
+        const result = await inspectImageCNN(floatArray);
 
         // Save to DB (non-blocking)
         if (isDbAvailable()) {
@@ -45,7 +51,7 @@ export async function POST(req: NextRequest) {
             ).catch(err => console.warn('DB write failed (non-fatal):', err.message));
         }
 
-        return NextResponse.json({ ...result, features });
+        return NextResponse.json(result);
     } catch (err) {
         console.error("Inspect Error:", err);
         return NextResponse.json({ error: "Inspection failed" }, { status: 500 });
