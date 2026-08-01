@@ -16,7 +16,7 @@ export default function SuggestPage() {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      targetCapacitance: parseFloat(formData.get("targetCapacitance") as string),
+      targetCapacitance: parseFloat(formData.get("targetCapacitance_val") as string) * parseFloat(formData.get("targetCapacitance_unit") as string),
       tolerancePct: parseFloat(formData.get("tolerancePct") as string),
       v_bias: parseFloat(formData.get("v_bias") as string),
       temperature: parseFloat(formData.get("temperature") as string),
@@ -54,8 +54,17 @@ export default function SuggestPage() {
         
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Target Capacitance (F)</label>
-            <input type="number" name="targetCapacitance" step="any" required defaultValue={1e-7} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
+            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Target Capacitance</label>
+            <div className="flex gap-2">
+              <input type="number" name="targetCapacitance_val" step="any" required defaultValue={100} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors font-mono" />
+              <select name="targetCapacitance_unit" defaultValue="1e-9" className="bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors cursor-pointer w-24">
+                <option value="1">F</option>
+                <option value="1e-3">mF</option>
+                <option value="1e-6">µF</option>
+                <option value="1e-9">nF</option>
+                <option value="1e-12">pF</option>
+              </select>
+            </div>
           </div>
             <div>
               <label htmlFor="tolerancePct" className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">Tolerance (%)</label>

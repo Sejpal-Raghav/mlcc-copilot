@@ -19,8 +19,8 @@ export default function PredictPage() {
     const data = {
       epsilon_r: parseFloat(formData.get("epsilon_r") as string),
       layers: parseInt(formData.get("layers") as string, 10),
-      area: parseFloat(formData.get("area") as string),
-      thickness: parseFloat(formData.get("thickness") as string),
+      area: parseFloat(formData.get("area_val") as string) * parseFloat(formData.get("area_unit") as string),
+      thickness: parseFloat(formData.get("thickness_val") as string) * parseFloat(formData.get("thickness_unit") as string),
       v_bias: parseFloat(formData.get("v_bias") as string),
       temperature: parseFloat(formData.get("temperature") as string),
     };
@@ -63,12 +63,25 @@ export default function PredictPage() {
             <input type="number" name="layers" required defaultValue={100} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Area (m²)</label>
-            <input type="number" name="area" step="any" required defaultValue={1e-5} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors" />
+            <label className="block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1.5">Area</label>
+            <div className="flex gap-2">
+              <input type="number" name="area_val" step="any" required defaultValue={10} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors font-mono" />
+              <select name="area_unit" defaultValue="1e-6" className="bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors cursor-pointer w-24">
+                <option value="1">m²</option>
+                <option value="1e-6">mm²</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label htmlFor="thickness" className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">Thickness (m)</label>
-            <input id="thickness" type="number" name="thickness" step="any" required defaultValue={10e-6} className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-sm font-mono text-zinc-900 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors" />
+            <label className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-semibold">Thickness</label>
+            <div className="flex gap-2">
+              <input type="number" name="thickness_val" step="any" required defaultValue={10} className="block w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors font-mono" />
+              <select name="thickness_unit" defaultValue="1e-6" className="bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:border-zinc-400 focus:bg-white transition-colors cursor-pointer w-24">
+                <option value="1">m</option>
+                <option value="1e-3">mm</option>
+                <option value="1e-6">µm</option>
+              </select>
+            </div>
           </div>
           
           {/* Operating Conditions */}
