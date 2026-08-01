@@ -6,46 +6,66 @@ This document outlines the high-level architecture of MLCC Copilot and details t
 
 ```mermaid
 graph TD
-    subgraph Client [Browser / Frontend]
-        UI[Next.js React UI]
-        Forms[Input Forms]
-        Charts[Recharts Visualizations]
-        
+    subgraph Client ["Browser / Frontend"]
+        UI["Next.js React UI"]
+        Forms["Input Forms"]
+        Charts["Recharts Visualizations"]
         UI --> Forms
         UI --> Charts
     end
-    
-    subgraph Backend [Next.js API Routes]
-        Zod[Zod Input Validation]
+
+    Forms -- "JSON POST" --> Zod
+
+    subgraph Backend ["Next.js API Routes"]
+        Zod["Zod Schema Validation"]
         PredictAPI["/api/predict-performance"]
         SuggestAPI["/api/suggest-design"]
         InspectAPI["/api/inspect"]
-        
-        Forms -- JSON POST --> Zod
-        Zod -- Validated Data --> PredictAPI
-        Zod -- Validated Data --> SuggestAPI
-        Zod -- Validated Data --> InspectAPI
-        
-        Adam[Custom Adam Optimizer]
-        SuggestAPI <--> Adam
+        HealthAPI["/api/healthz"]
+        Adam["Custom Adam Optimizer
+        (Central Finite Differences)"]
+
+        Zod -- "Validated payload" --> PredictAPI
+        Zod -- "Validated payload" --> SuggestAPI
+        Zod -- "Validated payload" --> InspectAPI
+        SuggestAPI -- "Init params" --> Adam
+        Adam -- "Optimized candidates" --> SuggestAPI
     end
-    
-    subgraph Inference [ONNX Runtime Node]
-        PINN[(PINN Surrogate Model)]
-        CNN[(AOI Vision Model)]
-        
-        PredictAPI -- Tensor --> PINN
-        Adam -- Batch Tensors --> PINN
-        InspectAPI -- Image Tensor --> CNN
+
+    subgraph Inference ["ONNX Runtime Node (C++ bindings)"]
+        subgraph PINN ["PINN Surrogate Model"]
+            P1["6-dim input vector"]
+            P2["MinMaxScaler (from pinn_scalers.json)"]
+            P3["Physics Branch: C = e0 * er * A * N / d"]
+            P4["Residual Branch: 3-layer MLP"]
+            P5["Physics + Residual sum"]
+            P6[("Capacitance, Resonant Freq,
+            ESR, Impedance Curve (100 pts)")]
+            P1 --> P2 --> P3 & P4 --> P5 --> P6
+        end
+
+        subgraph AOI ["AOI Defect Classifier (CNN)"]
+            C1["Raw image upload"]
+            C2["Resize to 128x128, Grayscale, Normalize 0-1"]
+            C3["3-layer Conv2D + ReLU + MaxPool"]
+            C4["Fully Connected + Softmax"]
+            C5[("Pass / Fail probabilities")]
+            C1 --> C2 --> C3 --> C4 --> C5
+        end
     end
-    
-    PINN -- Predictions --> PredictAPI
-    PINN -- Batch Predictions --> Adam
-    CNN -- Defect Probabilities --> InspectAPI
-    
-    PredictAPI -- JSON --> UI
-    SuggestAPI -- JSON --> UI
-    InspectAPI -- JSON --> UI
+
+    PredictAPI -- "Float32 tensor" --> P1
+    Adam -- "Batch tensors (N iterations)" --> P1
+    InspectAPI -- "Image buffer" --> C1
+
+    P6 -- "Predictions JSON" --> PredictAPI
+    P6 -- "Batch predictions" --> Adam
+    C5 -- "Classification JSON" --> InspectAPI
+    HealthAPI -- "Model readiness check" --> Inference
+
+    PredictAPI -- "JSON response" --> UI
+    SuggestAPI -- "JSON response" --> UI
+    InspectAPI -- "JSON response" --> UI
 ```
 
 ## Technical Decisions Log

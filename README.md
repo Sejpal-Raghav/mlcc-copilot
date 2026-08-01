@@ -2,6 +2,8 @@
 
 MLCC Copilot is an advanced AI engineering suite designed to solve the physical constraints of Multi-Layer Ceramic Capacitor (MLCC) manufacturing. It replaces computationally expensive physical simulations with instantaneous neural network inference. By embedding Physics-Informed Neural Networks (PINNs) and Convolutional Neural Networks (CNNs) directly into a Next.js full-stack application via ONNX Runtime, it empowers hardware engineers to predict performance, automatically optimize geometric parameters, and inspect manufacturing defects in real time.
 
+> **[Architecture and Technical Decisions](ARCHITECTURE.md)** -- Full system flowchart covering the PINN surrogate model pipeline, AOI vision classifier, custom Adam optimizer, Zod validation layer, and a log of every major engineering decision.
+
 ## Core Features
 
 ### 1. Performance Prediction (Forward Physics)
@@ -30,9 +32,7 @@ The physical parameters and electrical characteristics used to train the neural 
 * **Generation Method:** Latin Hypercube Sampling across a 6-dimensional parameter space to ensure uniform coverage of edge cases.
 * **Target Variables:** The dataset maps geometric inputs to output impedance spectrums (100 frequency points per sample), resonant frequencies, and parasitic resistance.
 
-## Tech Stack & Architecture
-
-For a complete flowchart of how the Next.js client, API routes, Zod validation, custom Adam optimizer, and ONNX Runtime interact, as well as a log of all technical decisions (such as why this app is completely stateless), please see the [Architecture Document](ARCHITECTURE.md).
+## Tech Stack
 
 * **Model Training (Offline):** Python, PyTorch.
 * **Model Serving:** Node.js, onnxruntime-node.
