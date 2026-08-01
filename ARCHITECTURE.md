@@ -17,9 +17,9 @@ graph TD
     
     subgraph Backend [Next.js API Routes]
         Zod[Zod Input Validation]
-        PredictAPI[/api/predict-performance]
-        SuggestAPI[/api/suggest-design]
-        InspectAPI[/api/inspect]
+        PredictAPI["/api/predict-performance"]
+        SuggestAPI["/api/suggest-design"]
+        InspectAPI["/api/inspect"]
         
         Forms -- JSON POST --> Zod
         Zod -- Validated Data --> PredictAPI
