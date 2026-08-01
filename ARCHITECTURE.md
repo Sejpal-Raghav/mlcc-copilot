@@ -22,12 +22,12 @@ graph LR
 
 ```mermaid
 graph TD
-    Input["Input: 6-dim vector (εᵣ, N, A, d, Vbias, T)"]
-    Scaler["MinMaxScaler (from pinn_scalers.json)"]
-    Phys["Physics Branch: C = e0 * er * A * N / d"]
-    Res["Residual Branch: 3-layer MLP"]
+    Input["Input: 6-dim vector<br/>(εᵣ, N, A, d, Vbias, T)"]
+    Scaler["MinMaxScaler<br/>(pinn_scalers.json)"]
+    Phys["Physics Branch:<br/>C = e0 * er * A * N / d"]
+    Res["Residual Branch:<br/>3-layer MLP"]
     Sum["Sum: Physics + Residual"]
-    Output[("Output: Capacitance, Resonant Freq, ESR, Impedance Curve")]
+    Output[("Output:<br/>Capacitance, Resonant Freq,<br/>ESR, Impedance Curve")]
     
     Input --> Scaler
     Scaler --> Phys
@@ -42,10 +42,10 @@ graph TD
 ```mermaid
 graph LR
     Img["Raw Image Upload"]
-    Prep["Resize 128x128, Grayscale, Normalize 0-1"]
-    CNN["3-layer Conv2D + ReLU + MaxPool"]
-    FC["Fully Connected + Softmax"]
-    Out[("Pass / Fail probabilities")]
+    Prep["Resize 128x128,<br/>Grayscale, Normalize 0-1"]
+    CNN["3-layer Conv2D<br/>+ ReLU + MaxPool"]
+    FC["Fully Connected<br/>+ Softmax"]
+    Out[("Pass / Fail<br/>probabilities")]
     
     Img --> Prep --> CNN --> FC --> Out
 ```
