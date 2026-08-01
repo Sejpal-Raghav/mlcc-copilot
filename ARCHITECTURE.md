@@ -1,43 +1,75 @@
-# Technical Decisions and Architecture
+# Architecture & Technical Decisions
 
-This document outlines the core technical decisions made while building the MLCC Copilot and the rationale behind each choice.
+This document outlines the high-level architecture of MLCC Copilot and details the reasoning behind key technical decisions made during its development.
 
-## 1. Physics-Informed Neural Networks over Classical ML
+## Architecture Flowchart
 
-### Decision
-Replaced Random Forest and Gradient Boosting models with a PyTorch Physics-Informed Neural Network (PINN).
+```mermaid
+graph TD
+    subgraph Client [Browser / Frontend]
+        UI[Next.js React UI]
+        Forms[Input Forms]
+        Charts[Recharts Visualizations]
+        
+        UI --> Forms
+        UI --> Charts
+    end
+    
+    subgraph Backend [Next.js API Routes]
+        Zod[Zod Input Validation]
+        PredictAPI[/api/predict-performance]
+        SuggestAPI[/api/suggest-design]
+        InspectAPI[/api/inspect]
+        
+        Forms -- JSON POST --> Zod
+        Zod -- Validated Data --> PredictAPI
+        Zod -- Validated Data --> SuggestAPI
+        Zod -- Validated Data --> InspectAPI
+        
+        Adam[Custom Adam Optimizer]
+        SuggestAPI <--> Adam
+    end
+    
+    subgraph Inference [ONNX Runtime Node]
+        PINN[(PINN Surrogate Model)]
+        CNN[(AOI Vision Model)]
+        
+        PredictAPI -- Tensor --> PINN
+        Adam -- Batch Tensors --> PINN
+        InspectAPI -- Image Tensor --> CNN
+    end
+    
+    PINN -- Predictions --> PredictAPI
+    PINN -- Batch Predictions --> Adam
+    CNN -- Defect Probabilities --> InspectAPI
+    
+    PredictAPI -- JSON --> UI
+    SuggestAPI -- JSON --> UI
+    InspectAPI -- JSON --> UI
+```
 
-### Rationale
-Classical tree based models are excellent for tabular data, but they struggle to learn continuous physical laws and smooth gradients. A PINN allows us to bake in the ideal capacitance formula `C = (epsilon * A * N) / d` as a hardcoded branch, while a Multi-Layer Perceptron (MLP) learns the non-linear residuals caused by physical parasitics like voltage derating and thermal drift. This guarantees physical baseline accuracy while capturing edge cases. Furthermore, Neural Networks provide continuous gradients, which is essential for inverse design.
+## Technical Decisions Log
 
-## 2. Adam Gradient Descent over Monte Carlo Search
+### 1. Fully Stateless Architecture (No Database)
+**Decision:** Removed PostgreSQL and all database dependencies.
+**Why:** The ONNX models run inferences in milliseconds. Storing and retrieving past prediction results from a database introduced unnecessary complexity, latency, and state management. Because computation is virtually free and instantaneous, it is better to simply rerun the prediction on the fly rather than caching it.
 
-### Decision
-Replaced the random Monte Carlo search in the Auto-Tune feature with an Adam Gradient Descent optimizer.
+### 2. ONNX Runtime Node vs. Python Subprocesses
+**Decision:** Serve models using `onnxruntime-node` directly inside the Next.js API routes instead of spinning up a Flask server or Python subprocesses.
+**Why:** Spawning Python subprocesses or maintaining a separate Python microservice introduces significant latency (cold starts, IPC overhead, and HTTP round trips). Running the C++ ONNX binaries natively in the Node.js process gives us sub-millisecond inference latency, which is strictly required for the Auto-Tune engine.
 
-### Rationale
-Monte Carlo search relies on brute-force random sampling. For a high-dimensional continuous physics space, this is incredibly inefficient. Because we migrated to a continuous Neural Network, we can calculate gradients using Finite Differences. By implementing a custom Adam optimizer in TypeScript, the system can mathematically follow the gradient vector to find the exact geometric parameters needed to hit a target specification in milliseconds.
+### 3. Custom Adam Optimizer in TypeScript
+**Decision:** Built a custom Adam Gradient Descent optimizer in TypeScript using Finite Differences for the Auto-Tune feature.
+**Why:** We needed inverse design capabilities (finding geometric inputs that hit a target capacitance). Using brute-force Monte Carlo was too slow. Because the PINN model is served in Node, we had to write the optimizer in TypeScript to keep the feedback loop tight. The optimizer runs hundreds of batched predictions per second locally in Node, achieving convergence in under 50 iterations.
 
-## 3. Convolutional Neural Networks over Classical Computer Vision
+### 4. Zod Schema Validation
+**Decision:** Introduced strict runtime validation on all API endpoints using `zod`.
+**Why:** The ONNX C++ bindings will crash the Node process if fed `NaN` or completely invalid tensor shapes. Zod ensures that all inputs (like layer count or dielectric constant) are strictly numeric and within physical bounds before ever touching the inference engine, ensuring rock-solid stability.
 
-### Decision
-Migrated the Automated Optical Inspection (AOI) pipeline from classical OpenCV feature extraction (edge density, contour counting) to a native 3-layer Convolutional Neural Network (CNN).
+### 5. Standard Build vs. Dockerization
+**Decision:** Stripped out Docker components in favor of a standard Node.js (`npm run build && npm start`) deployment.
+**Why:** Modern PaaS platforms (like Render.com, Vercel, or Railway) have native support for Node.js environments. By removing Docker, we reduced the repository footprint, eliminated container build times, and simplified the CI/CD pipeline, relying entirely on `package.json` for dependency management.
 
-### Rationale
-Classical computer vision requires manual feature engineering, making it highly brittle to lighting changes, camera angles, or unexpected defect shapes. A CNN learns hierarchical spatial features directly from raw 128x128 grayscale pixels, resulting in a much more robust defect classifier that generalizes better to new variations of scratches, chips, and voids.
-
-## 4. ONNX Runtime over FastAPI Python Backend
-
-### Decision
-Exported all PyTorch models to ONNX and run them directly in the Next.js Node.js backend using `onnxruntime-node`, eliminating the need for a separate Python FastAPI server.
-
-### Rationale
-Maintaining two separate deployment stacks (Node.js for the frontend and Python for the models) increases latency, deployment complexity, and infrastructure costs. Compiling models to ONNX allows the entire application to run in a unified, highly optimized Node environment. ONNX Runtime in Node is backed by C++ bindings, offering inference speeds (under 15 milliseconds) that rival or exceed native Python execution.
-
-## 5. Stateless Architecture over PostgreSQL
-
-### Decision
-Removed the PostgreSQL database requirement, making the application entirely stateless.
-
-### Rationale
-The primary value of the MLCC Copilot is real-time physics inference and inverse design. Storing logs or caching inference results adds unnecessary state management and slows down the user experience. Making the application stateless allows it to be deployed easily to containerized environments and scale infinitely without database bottlenecking.
+### 6. Client-Side Rendering vs. Server Components
+**Decision:** The UI heavily leverages Client Components (`'use client'`) for pages containing forms and Recharts.
+**Why:** MLCC Copilot is a highly interactive engineering tool rather than a static content site. We need immediate state updates for the Predict Comparison Mode and dynamic charting, making client-side state management the most appropriate paradigm. 

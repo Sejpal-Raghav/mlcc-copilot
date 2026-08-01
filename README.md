@@ -30,7 +30,9 @@ The physical parameters and electrical characteristics used to train the neural 
 * **Generation Method:** Latin Hypercube Sampling across a 6-dimensional parameter space to ensure uniform coverage of edge cases.
 * **Target Variables:** The dataset maps geometric inputs to output impedance spectrums (100 frequency points per sample), resonant frequencies, and parasitic resistance.
 
-## Tech Stack
+## Tech Stack & Architecture
+
+For a complete flowchart of how the Next.js client, API routes, Zod validation, custom Adam optimizer, and ONNX Runtime interact, as well as a log of all technical decisions (such as why this app is completely stateless), please see the [Architecture Document](ARCHITECTURE.md).
 
 * **Model Training (Offline):** Python, PyTorch.
 * **Model Serving:** Node.js, onnxruntime-node.
