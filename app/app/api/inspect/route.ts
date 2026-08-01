@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { inspectImageCNN } from '@/lib/models';
 
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import os from 'os';
+
 import sharp from 'sharp';
 
 export async function POST(req: NextRequest) {

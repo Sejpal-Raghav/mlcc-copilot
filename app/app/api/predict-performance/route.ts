@@ -7,13 +7,15 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { epsilon_r, layers, area, thickness, v_bias, temperature } = body;
 
+        const isValid = (v: any, min: number) => typeof v === 'number' && !isNaN(v) && isFinite(v) && v >= min;
+
         if (
-            typeof epsilon_r !== 'number' || epsilon_r <= 0 ||
-            typeof layers !== 'number' || layers <= 0 ||
-            typeof area !== 'number' || area <= 0 ||
-            typeof thickness !== 'number' || thickness <= 0 ||
-            typeof v_bias !== 'number' || v_bias < 0 ||
-            typeof temperature !== 'number'
+            !isValid(epsilon_r, 1) ||
+            !isValid(layers, 1) ||
+            !isValid(area, 1e-9) ||
+            !isValid(thickness, 1e-9) ||
+            !isValid(v_bias, 0) ||
+            !isValid(temperature, -273)
         ) {
             return NextResponse.json({ error: "Invalid numeric parameters" }, { status: 400 });
         }

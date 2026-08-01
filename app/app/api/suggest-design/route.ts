@@ -44,11 +44,15 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { targetCapacitance, tolerancePct, v_bias = 0, temperature = 25 } = body;
 
-        if (typeof targetCapacitance !== 'number' || targetCapacitance <= 0 ||
-            typeof tolerancePct !== 'number' || tolerancePct <= 0 ||
-            typeof v_bias !== 'number' || v_bias < 0 ||
-            typeof temperature !== 'number') {
-            return NextResponse.json({ error: "Invalid target parameters" }, { status: 400 });
+        const isValid = (v: any, min: number) => typeof v === 'number' && !isNaN(v) && isFinite(v) && v >= min;
+
+        if (
+            !isValid(targetCapacitance, 1e-15) ||
+            !isValid(tolerancePct, 0.1) ||
+            !isValid(v_bias, 0) ||
+            !isValid(temperature, -273)
+        ) {
+            return NextResponse.json({ error: "Invalid numeric parameters" }, { status: 400 });
         }
 
         // ====================================================================
