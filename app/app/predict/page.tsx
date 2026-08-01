@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { MetricTable, MetricDefinition } from '@/components/MetricTable';
 
 export default function PredictPage() {
   const [loading, setLoading] = useState(false);
@@ -240,119 +241,34 @@ export default function PredictPage() {
               </h3>
             </div>
 
-            {history.length === 2 ? (
-              <div className="flex-grow">
-                <div className="grid grid-cols-4 gap-4 text-left border-b border-zinc-200 pb-2 mb-4">
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">
-                    Metric
-                  </div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-800">
-                    Baseline
-                  </div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">
-                    Comparison
-                  </div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">
-                    Delta
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    <div className="text-xs font-semibold text-zinc-500">Capacitance</div>
-                    <div className="text-sm font-mono text-zinc-900">
-                      {baselineResult.capacitance.toExponential(4)} F
-                    </div>
-                    <div className="text-sm font-mono text-zinc-600">
-                      {currentResult.capacitance.toExponential(4)} F
-                    </div>
-                    <div
-                      className={`text-xs font-mono font-semibold ${currentResult.capacitance > baselineResult.capacitance ? 'text-emerald-600' : 'text-red-600'}`}
-                    >
-                      {currentResult.capacitance > baselineResult.capacitance ? '+' : ''}
-                      {(
-                        ((currentResult.capacitance - baselineResult.capacitance) /
-                          baselineResult.capacitance) *
-                        100
-                      ).toFixed(1)}
-                      %
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    <div className="text-xs font-semibold text-zinc-500">Resonant Freq</div>
-                    <div className="text-sm font-mono text-zinc-900">
-                      {(baselineResult.resonantFrequency / 1e6).toFixed(2)} MHz
-                    </div>
-                    <div className="text-sm font-mono text-zinc-600">
-                      {(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz
-                    </div>
-                    <div
-                      className={`text-xs font-mono font-semibold ${currentResult.resonantFrequency > baselineResult.resonantFrequency ? 'text-emerald-600' : 'text-red-600'}`}
-                    >
-                      {currentResult.resonantFrequency > baselineResult.resonantFrequency
-                        ? '+'
-                        : ''}
-                      {(
-                        ((currentResult.resonantFrequency - baselineResult.resonantFrequency) /
-                          baselineResult.resonantFrequency) *
-                        100
-                      ).toFixed(1)}
-                      %
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    <div className="text-xs font-semibold text-zinc-500">ESR</div>
-                    <div className="text-sm font-mono text-zinc-900">
-                      {(baselineResult.esr * 1000).toFixed(2)} mΩ
-                    </div>
-                    <div className="text-sm font-mono text-zinc-600">
-                      {(currentResult.esr * 1000).toFixed(2)} mΩ
-                    </div>
-                    <div
-                      className={`text-xs font-mono font-semibold ${currentResult.esr > baselineResult.esr ? 'text-red-600' : 'text-emerald-600'}`}
-                    >
-                      {currentResult.esr > baselineResult.esr ? '+' : ''}
-                      {(
-                        ((currentResult.esr - baselineResult.esr) / baselineResult.esr) *
-                        100
-                      ).toFixed(1)}
-                      %
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-grow">
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">
-                    Capacitance
-                  </div>
-                  <div className="text-2xl font-mono text-zinc-900">
-                    {currentResult.capacitance.toExponential(4)} F
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">
-                    Resonant Freq
-                  </div>
-                  <div className="text-2xl font-mono text-zinc-900">
-                    {(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">
-                    Equiv. Series Resistance
-                  </div>
-                  <div className="text-2xl font-mono text-zinc-900">
-                    {(currentResult.esr * 1000).toFixed(2)} mΩ
-                  </div>
-                </div>
-              </div>
-            )}
+            <MetricTable 
+              metrics={[
+                {
+                  label: 'Capacitance',
+                  baselineValue: baselineResult?.capacitance,
+                  currentValue: currentResult.capacitance,
+                  format: (v) => v.toExponential(4),
+                  unit: 'F',
+                  invertDeltaColor: false,
+                },
+                {
+                  label: 'Resonant Freq',
+                  baselineValue: baselineResult?.resonantFrequency,
+                  currentValue: currentResult.resonantFrequency,
+                  format: (v) => (v / 1e6).toFixed(2),
+                  unit: 'MHz',
+                  invertDeltaColor: false,
+                },
+                {
+                  label: 'ESR',
+                  baselineValue: baselineResult?.esr,
+                  currentValue: currentResult.esr,
+                  format: (v) => (v * 1000).toFixed(2),
+                  unit: 'mΩ',
+                  invertDeltaColor: true,
+                },
+              ]}
+            />
 
             <div className="mt-8">
               <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-2">
