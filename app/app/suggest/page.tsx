@@ -154,7 +154,7 @@ export default function SuggestPage() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" />
                     <XAxis dataKey="iteration" tick={{fontSize: 10}} tickLine={false} axisLine={false} />
                     <YAxis tick={{fontSize: 10}} tickLine={false} axisLine={false} tickFormatter={(val) => val.toExponential(1)} />
-                    <Tooltip contentStyle={{fontSize: '12px', border: '1px solid #e4e4e7', borderRadius: '4px', boxShadow: 'none'}} formatter={(val: number) => val.toExponential(3)} labelFormatter={(lbl) => `Iteration ${lbl}`} />
+                    <Tooltip contentStyle={{fontSize: '12px', border: '1px solid #e4e4e7', borderRadius: '4px', boxShadow: 'none'}} formatter={(val: any) => Number(val).toExponential(3)} labelFormatter={(lbl) => `Iteration ${lbl}`} />
                     <Line type="monotone" dataKey="loss" stroke="#18181b" strokeWidth={2} dot={false} animationDuration={1000} />
                   </LineChart>
                 </ResponsiveContainer>
