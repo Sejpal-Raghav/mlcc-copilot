@@ -141,31 +141,62 @@ export default function PredictPage() {
               <h3 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Inference Output {history.length === 2 && "(Comparison Mode)"}</h3>
             </div>
             
-            <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-grow">
-              <div>
-                <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Capacitance</div>
-                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? baselineResult.capacitance.toExponential(4) : currentResult.capacitance.toExponential(4)} F</div>
-                {baselineResult && (
-                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {currentResult.capacitance.toExponential(4)} F ({(((currentResult.capacitance - baselineResult.capacitance) / baselineResult.capacitance) * 100).toFixed(1)}%)</div>
-                )}
+            {history.length === 2 ? (
+              <div className="flex-grow">
+                <div className="grid grid-cols-4 gap-4 text-left border-b border-zinc-200 pb-2 mb-4">
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">Metric</div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-800">Baseline</div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Comparison</div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Delta</div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <div className="text-xs font-semibold text-zinc-500">Capacitance</div>
+                    <div className="text-sm font-mono text-zinc-900">{baselineResult.capacitance.toExponential(4)} F</div>
+                    <div className="text-sm font-mono text-zinc-600">{currentResult.capacitance.toExponential(4)} F</div>
+                    <div className={`text-xs font-mono font-semibold ${currentResult.capacitance > baselineResult.capacitance ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {currentResult.capacitance > baselineResult.capacitance ? '+' : ''}{(((currentResult.capacitance - baselineResult.capacitance) / baselineResult.capacitance) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <div className="text-xs font-semibold text-zinc-500">Resonant Freq</div>
+                    <div className="text-sm font-mono text-zinc-900">{(baselineResult.resonantFrequency / 1e6).toFixed(2)} MHz</div>
+                    <div className="text-sm font-mono text-zinc-600">{(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz</div>
+                    <div className={`text-xs font-mono font-semibold ${currentResult.resonantFrequency > baselineResult.resonantFrequency ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {currentResult.resonantFrequency > baselineResult.resonantFrequency ? '+' : ''}{(((currentResult.resonantFrequency - baselineResult.resonantFrequency) / baselineResult.resonantFrequency) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 gap-4 items-center">
+                    <div className="text-xs font-semibold text-zinc-500">ESR</div>
+                    <div className="text-sm font-mono text-zinc-900">{(baselineResult.esr * 1000).toFixed(2)} mΩ</div>
+                    <div className="text-sm font-mono text-zinc-600">{(currentResult.esr * 1000).toFixed(2)} mΩ</div>
+                    <div className={`text-xs font-mono font-semibold ${currentResult.esr > baselineResult.esr ? 'text-red-600' : 'text-emerald-600'}`}>
+                      {currentResult.esr > baselineResult.esr ? '+' : ''}{(((currentResult.esr - baselineResult.esr) / baselineResult.esr) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div>
-                <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Resonant Freq</div>
-                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? (baselineResult.resonantFrequency / 1e6).toFixed(2) : (currentResult.resonantFrequency / 1e6).toFixed(2)} MHz</div>
-                {baselineResult && (
-                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz ({(((currentResult.resonantFrequency - baselineResult.resonantFrequency) / baselineResult.resonantFrequency) * 100).toFixed(1)}%)</div>
-                )}
+            ) : (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-grow">
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Capacitance</div>
+                  <div className="text-2xl font-mono text-zinc-900">{currentResult.capacitance.toExponential(4)} F</div>
+                </div>
+                
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Resonant Freq</div>
+                  <div className="text-2xl font-mono text-zinc-900">{(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz</div>
+                </div>
+                
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Equiv. Series Resistance</div>
+                  <div className="text-2xl font-mono text-zinc-900">{(currentResult.esr * 1000).toFixed(2)} mΩ</div>
+                </div>
               </div>
-              
-              <div>
-                <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Equiv. Series Resistance</div>
-                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? (baselineResult.esr * 1000).toFixed(2) : (currentResult.esr * 1000).toFixed(2)} mΩ</div>
-                {baselineResult && (
-                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {(currentResult.esr * 1000).toFixed(2)} mΩ ({(((currentResult.esr - baselineResult.esr) / baselineResult.esr) * 100).toFixed(1)}%)</div>
-                )}
-              </div>
-            </div>
+            )}
             
             <div className="mt-8">
               <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-2">Impedance Spectrum Z(f)</div>
