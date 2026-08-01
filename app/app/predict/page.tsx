@@ -7,13 +7,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function PredictPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setResult(null);
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -35,13 +34,33 @@ export default function PredictPage() {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.error || "Prediction failed");
 
-      setResult(resData);
+      setHistory(prev => {
+        const next = [...prev, resData];
+        return next.length > 2 ? next.slice(1) : next;
+      });
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleClear = () => setHistory([]);
+
+  const getMergedCurve = () => {
+    if (history.length === 0) return [];
+    if (history.length === 1) return history[0].impedanceCurve;
+    
+    return history[0].impedanceCurve.map((pt: any, i: number) => ({
+      freq: pt.freq,
+      Baseline: pt.z,
+      Comparison: history[1].impedanceCurve[i].z
+    }));
+  };
+
+  const mergedCurve = getMergedCurve();
+  const currentResult = history.length > 0 ? history[history.length - 1] : null;
+  const baselineResult = history.length === 2 ? history[0] : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -99,10 +118,15 @@ export default function PredictPage() {
             </div>
           </div>
           
-          <div className="pt-2">
-            <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-zinc-900 text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">
-              {loading ? "Computing..." : "Run Inference"}
+          <div className="pt-2 flex gap-3">
+            <button type="submit" disabled={loading} className="flex-1 flex justify-center py-2.5 px-4 border border-zinc-900 text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">
+              {loading ? "Computing..." : history.length === 0 ? "Run Inference" : "Compare"}
             </button>
+            {history.length > 0 && (
+              <button type="button" onClick={handleClear} disabled={loading} className="flex justify-center py-2.5 px-4 border border-zinc-200 text-xs font-semibold text-zinc-900 bg-white hover:bg-zinc-50 focus:outline-none disabled:opacity-50 transition-colors uppercase tracking-wider">
+                Clear
+              </button>
+            )}
           </div>
           
           {error && <div className="text-xs text-red-600 bg-red-50 border border-red-200 p-3 flex items-start gap-2 mt-4"><AlertCircle className="w-4 h-4 shrink-0" /> {error}</div>}
@@ -111,24 +135,35 @@ export default function PredictPage() {
 
       {/* Results Column */}
       <div className="lg:col-span-7">
-        {result ? (
+        {currentResult ? (
           <div className="bg-white border border-zinc-200 p-6 h-full flex flex-col">
-            <h3 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-6 border-b border-zinc-100 pb-4">Inference Output</h3>
+            <div className="flex items-center justify-between mb-6 border-b border-zinc-100 pb-4">
+              <h3 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Inference Output {history.length === 2 && "(Comparison Mode)"}</h3>
+            </div>
             
             <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-grow">
               <div>
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Capacitance</div>
-                <div className="text-2xl font-mono text-zinc-900">{result.capacitance.toExponential(4)} F</div>
+                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? baselineResult.capacitance.toExponential(4) : currentResult.capacitance.toExponential(4)} F</div>
+                {baselineResult && (
+                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {currentResult.capacitance.toExponential(4)} F ({(((currentResult.capacitance - baselineResult.capacitance) / baselineResult.capacitance) * 100).toFixed(1)}%)</div>
+                )}
               </div>
               
               <div>
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Resonant Freq</div>
-                <div className="text-2xl font-mono text-zinc-900">{(result.resonantFrequency / 1e6).toFixed(2)} MHz</div>
+                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? (baselineResult.resonantFrequency / 1e6).toFixed(2) : (currentResult.resonantFrequency / 1e6).toFixed(2)} MHz</div>
+                {baselineResult && (
+                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {(currentResult.resonantFrequency / 1e6).toFixed(2)} MHz ({(((currentResult.resonantFrequency - baselineResult.resonantFrequency) / baselineResult.resonantFrequency) * 100).toFixed(1)}%)</div>
+                )}
               </div>
               
               <div>
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-1">Equiv. Series Resistance</div>
-                <div className="text-2xl font-mono text-zinc-900">{(result.esr * 1000).toFixed(2)} mΩ</div>
+                <div className="text-2xl font-mono text-zinc-900">{baselineResult ? (baselineResult.esr * 1000).toFixed(2) : (currentResult.esr * 1000).toFixed(2)} mΩ</div>
+                {baselineResult && (
+                  <div className="text-xs font-mono text-emerald-600 mt-1">vs {(currentResult.esr * 1000).toFixed(2)} mΩ ({(((currentResult.esr - baselineResult.esr) / baselineResult.esr) * 100).toFixed(1)}%)</div>
+                )}
               </div>
             </div>
             
@@ -136,7 +171,7 @@ export default function PredictPage() {
               <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-2">Impedance Spectrum Z(f)</div>
               <div className="h-48 border border-zinc-100 bg-zinc-50/50 p-2">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={result.impedanceCurve} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                  <LineChart data={mergedCurve} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
                     <XAxis 
                       dataKey="freq" 
@@ -167,7 +202,10 @@ export default function PredictPage() {
                       labelFormatter={(val) => `Frequency: ${(val as number).toExponential(2)} Hz`}
                       formatter={(val: any) => [val ? Number(val).toExponential(4) + ' Ω' : '', 'Impedance']}
                     />
-                    <Line type="monotone" dataKey="z" stroke="#18181b" strokeWidth={2} dot={false} isAnimationActive={true} animationDuration={1000} />
+                    <Line type="monotone" dataKey={history.length === 2 ? "Baseline" : "z"} stroke="#18181b" strokeWidth={2} dot={false} isAnimationActive={true} animationDuration={1000} name="Baseline" />
+                    {history.length === 2 && (
+                      <Line type="monotone" dataKey="Comparison" stroke="#a1a1aa" strokeDasharray="5 5" strokeWidth={2} dot={false} isAnimationActive={true} animationDuration={1000} name="Comparison" />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -191,7 +229,7 @@ export default function PredictPage() {
             <div className="mt-6 pt-6 border-t border-zinc-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500">Model Confidence</div>
-                {result.confidence === 'high' ? (
+                {currentResult.confidence === 'high' ? (
                   <span className="flex items-center gap-1 px-2 py-0.5 border border-zinc-300 text-[10px] font-semibold text-zinc-700 bg-zinc-50">
                     <CheckCircle2 className="w-3 h-3" /> IN-DISTRIBUTION
                   </span>
