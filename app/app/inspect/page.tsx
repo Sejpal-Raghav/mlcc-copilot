@@ -115,10 +115,7 @@ export default function InspectPage() {
                     </div>
                 )}
                 
-                <div className="p-4 bg-zinc-900 text-zinc-300 text-xs font-mono overflow-x-auto">
-                    <div className="text-zinc-500 mb-2">// Raw Extracted Features</div>
-                    <pre>{JSON.stringify(result.features, null, 2)}</pre>
-                </div>
+
                 
                 <div className="mt-6 bg-zinc-50 border border-zinc-200 p-4 w-full">
                   <h4 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-700 mb-3">Model Insights (AOI)</h4>
