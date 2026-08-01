@@ -15,7 +15,7 @@ const BOUNDS = {
 function uToX(u: number[]) {
     return [
         Math.exp(Math.log(BOUNDS.epsilon_r.min) + u[0] * (Math.log(BOUNDS.epsilon_r.max) - Math.log(BOUNDS.epsilon_r.min))),
-        Math.round(BOUNDS.layers.min + u[1] * (BOUNDS.layers.max - BOUNDS.layers.min)),
+        BOUNDS.layers.min + u[1] * (BOUNDS.layers.max - BOUNDS.layers.min),
         Math.exp(Math.log(BOUNDS.area.min) + u[2] * (Math.log(BOUNDS.area.max) - Math.log(BOUNDS.area.min))),
         Math.exp(Math.log(BOUNDS.thickness.min) + u[3] * (Math.log(BOUNDS.thickness.max) - Math.log(BOUNDS.thickness.min)))
     ];
@@ -148,7 +148,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Evaluate final optimized seeds
-        const finalInputs = seedsU.map(u => [...uToX(u), v_bias, temperature] as [number, number, number, number, number, number]);
+        const finalInputs = seedsU.map(u => {
+            const x = uToX(u);
+            x[1] = Math.round(x[1]); // Snap layers to integer for final evaluation
+            return [...x, v_bias, temperature] as [number, number, number, number, number, number];
+        });
         const finalCapacitances = await batchPredictCapacitance(finalInputs);
 
         const candidates = seedsU.map((u, i) => {
@@ -156,7 +160,7 @@ export async function POST(req: NextRequest) {
             const cap = finalCapacitances[i];
             return {
                 epsilon_r: x[0],
-                layers: x[1],
+                layers: Math.round(x[1]),
                 area: x[2],
                 thickness: x[3],
                 predictedCapacitance: cap,
@@ -182,6 +186,10 @@ export async function POST(req: NextRequest) {
             }
             if (!isDuplicate) uniqueCandidates.push(c);
             if (uniqueCandidates.length >= 3) break;
+        }
+
+        if (uniqueCandidates.length === 0) {
+            return NextResponse.json({ error: "Optimization failed to find any valid candidates." }, { status: 500 });
         }
 
         if (uniqueCandidates[0].distanceToTarget > (tolerancePct / 100)) {
