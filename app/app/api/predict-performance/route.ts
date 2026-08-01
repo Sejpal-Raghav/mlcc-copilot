@@ -2,23 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { predictPerformance } from '@/lib/models';
 
 
+import { z } from 'zod';
+
+const predictSchema = z.object({
+    epsilon_r: z.number().min(1).max(20000),
+    layers: z.number().int().min(1).max(5000),
+    area: z.number().min(1e-9).max(1),
+    thickness: z.number().min(1e-9).max(1),
+    v_bias: z.number().min(0).max(100),
+    temperature: z.number().min(-273).max(300)
+});
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { epsilon_r, layers, area, thickness, v_bias, temperature } = body;
-
-        const isValid = (v: any, min: number) => typeof v === 'number' && !isNaN(v) && isFinite(v) && v >= min;
-
-        if (
-            !isValid(epsilon_r, 1) ||
-            !isValid(layers, 1) ||
-            !isValid(area, 1e-9) ||
-            !isValid(thickness, 1e-9) ||
-            !isValid(v_bias, 0) ||
-            !isValid(temperature, -273)
-        ) {
-            return NextResponse.json({ error: "Invalid numeric parameters" }, { status: 400 });
+        
+        const parseResult = predictSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ 
+                error: "Invalid numeric parameters", 
+                details: parseResult.error.format() 
+            }, { status: 400 });
         }
+        
+        const { epsilon_r, layers, area, thickness, v_bias, temperature } = parseResult.data;
 
         // Get prediction from model
         const result = await predictPerformance(epsilon_r, layers, area, thickness, v_bias, temperature);

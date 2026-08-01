@@ -39,21 +39,28 @@ function clamp(val: number, min: number, max: number) {
     return Math.max(min, Math.min(max, val));
 }
 
+import { z } from 'zod';
+
+const suggestSchema = z.object({
+    targetCapacitance: z.number().min(1e-15).max(1),
+    tolerancePct: z.number().min(0.1).max(100),
+    v_bias: z.number().min(0).max(100).default(0),
+    temperature: z.number().min(-273).max(300).default(25)
+});
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { targetCapacitance, tolerancePct, v_bias = 0, temperature = 25 } = body;
-
-        const isValid = (v: any, min: number) => typeof v === 'number' && !isNaN(v) && isFinite(v) && v >= min;
-
-        if (
-            !isValid(targetCapacitance, 1e-15) ||
-            !isValid(tolerancePct, 0.1) ||
-            !isValid(v_bias, 0) ||
-            !isValid(temperature, -273)
-        ) {
-            return NextResponse.json({ error: "Invalid numeric parameters" }, { status: 400 });
+        
+        const parseResult = suggestSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ 
+                error: "Invalid numeric parameters", 
+                details: parseResult.error.format() 
+            }, { status: 400 });
         }
+        
+        const { targetCapacitance, tolerancePct, v_bias, temperature } = parseResult.data;
 
         // ====================================================================
         // OPTIMIZATION: Finite Difference Gradient Descent (Adam)
