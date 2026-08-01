@@ -5,67 +5,49 @@ This document outlines the high-level architecture of MLCC Copilot and details t
 ## Architecture Flowchart
 
 ```mermaid
+graph LR
+    Client["Browser UI (Next.js)"]
+    Zod["Zod Validation"]
+    API["API Routes"]
+    ONNX["ONNX Runtime (Node.js)"]
+    
+    Client -- "JSON" --> Zod
+    Zod -- "Validated payload" --> API
+    API -- "Tensors" --> ONNX
+    ONNX -- "Predictions" --> API
+    API -- "JSON" --> Client
+```
+
+### PINN Surrogate Model Pipeline
+
+```mermaid
 graph TD
-    subgraph Client ["Browser / Frontend"]
-        UI["Next.js React UI"]
-        Forms["Input Forms"]
-        Charts["Recharts Visualizations"]
-        UI --> Forms
-        UI --> Charts
-    end
+    Input["Input: 6-dim vector (εᵣ, N, A, d, Vbias, T)"]
+    Scaler["MinMaxScaler (from pinn_scalers.json)"]
+    Phys["Physics Branch: C = e0 * er * A * N / d"]
+    Res["Residual Branch: 3-layer MLP"]
+    Sum["Sum: Physics + Residual"]
+    Output[("Output: Capacitance, Resonant Freq, ESR, Impedance Curve")]
+    
+    Input --> Scaler
+    Scaler --> Phys
+    Scaler --> Res
+    Phys --> Sum
+    Res --> Sum
+    Sum --> Output
+```
 
-    Forms -- "JSON POST" --> Zod
+### AOI Vision Model Pipeline
 
-    subgraph Backend ["Next.js API Routes"]
-        Zod["Zod Schema Validation"]
-        PredictAPI["/api/predict-performance"]
-        SuggestAPI["/api/suggest-design"]
-        InspectAPI["/api/inspect"]
-        HealthAPI["/api/healthz"]
-        Adam["Custom Adam Optimizer
-        (Central Finite Differences)"]
-
-        Zod -- "Validated payload" --> PredictAPI
-        Zod -- "Validated payload" --> SuggestAPI
-        Zod -- "Validated payload" --> InspectAPI
-        SuggestAPI -- "Init params" --> Adam
-        Adam -- "Optimized candidates" --> SuggestAPI
-    end
-
-    subgraph Inference ["ONNX Runtime Node (C++ bindings)"]
-        subgraph PINN ["PINN Surrogate Model"]
-            P1["6-dim input vector"]
-            P2["MinMaxScaler (from pinn_scalers.json)"]
-            P3["Physics Branch: C = e0 * er * A * N / d"]
-            P4["Residual Branch: 3-layer MLP"]
-            P5["Physics + Residual sum"]
-            P6[("Capacitance, Resonant Freq,
-            ESR, Impedance Curve (100 pts)")]
-            P1 --> P2 --> P3 & P4 --> P5 --> P6
-        end
-
-        subgraph AOI ["AOI Defect Classifier (CNN)"]
-            C1["Raw image upload"]
-            C2["Resize to 128x128, Grayscale, Normalize 0-1"]
-            C3["3-layer Conv2D + ReLU + MaxPool"]
-            C4["Fully Connected + Softmax"]
-            C5[("Pass / Fail probabilities")]
-            C1 --> C2 --> C3 --> C4 --> C5
-        end
-    end
-
-    PredictAPI -- "Float32 tensor" --> P1
-    Adam -- "Batch tensors (N iterations)" --> P1
-    InspectAPI -- "Image buffer" --> C1
-
-    P6 -- "Predictions JSON" --> PredictAPI
-    P6 -- "Batch predictions" --> Adam
-    C5 -- "Classification JSON" --> InspectAPI
-    HealthAPI -- "Model readiness check" --> Inference
-
-    PredictAPI -- "JSON response" --> UI
-    SuggestAPI -- "JSON response" --> UI
-    InspectAPI -- "JSON response" --> UI
+```mermaid
+graph LR
+    Img["Raw Image Upload"]
+    Prep["Resize 128x128, Grayscale, Normalize 0-1"]
+    CNN["3-layer Conv2D + ReLU + MaxPool"]
+    FC["Fully Connected + Softmax"]
+    Out[("Pass / Fail probabilities")]
+    
+    Img --> Prep --> CNN --> FC --> Out
 ```
 
 ## Technical Decisions Log
