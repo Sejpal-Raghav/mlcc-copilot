@@ -30,9 +30,11 @@ export default function SuggestPage() {
       });
 
       const resData = await res.json();
+      if (resData.candidates && Array.isArray(resData.candidates)) {
+        setCandidates(resData.candidates);
+      }
+      
       if (!res.ok) throw new Error(resData.error || "Search failed");
-
-      setCandidates(resData.candidates);
     } catch (err: any) {
       setError(err.message);
     } finally {
