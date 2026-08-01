@@ -93,7 +93,10 @@ export async function POST(req: NextRequest) {
         const epsilon = 1e-8;
 
         // Optimization Loop
+        const history: { iteration: number, loss: number }[] = [];
+
         for (let iter = 1; iter <= MAX_ITER; iter++) {
+            let bestLossForIter = Infinity;
             // Build batch for central finite difference
             // For each seed: 1 center point + 8 perturbed points = 9 points
             const batchInputs: Array<[number, number, number, number, number, number]> = [];
@@ -125,6 +128,7 @@ export async function POST(req: NextRequest) {
                 const logC = Math.log(cCenter);
                 const logTarget = Math.log(targetCapacitance);
                 const loss = Math.pow(logC - logTarget, 2);
+                if (loss < bestLossForIter) bestLossForIter = loss;
                 
                 const gradLossToLogC = 2 * (logC - logTarget);
 
@@ -149,6 +153,7 @@ export async function POST(req: NextRequest) {
                     seedsU[s][dim] = clamp(seedsU[s][dim], 0, 1); // keep in bounds
                 }
             }
+            history.push({ iteration: iter, loss: bestLossForIter });
         }
 
         // Evaluate final optimized seeds
@@ -199,11 +204,12 @@ export async function POST(req: NextRequest) {
         if (uniqueCandidates[0].distanceToTarget > (tolerancePct / 100)) {
             return NextResponse.json({ 
                 error: `Best candidate was ${(uniqueCandidates[0].distanceToTarget * 100).toFixed(1)}% off target (tolerance: ${tolerancePct}%). Try relaxing tolerance.`,
-                candidates: uniqueCandidates 
+                candidates: uniqueCandidates,
+                history
             }, { status: 400 });
         }
 
-        return NextResponse.json({ candidates: uniqueCandidates });
+        return NextResponse.json({ candidates: uniqueCandidates, history });
     } catch (err) {
         console.error("Suggest Error:", err);
         return NextResponse.json({ error: "Optimization failed" }, { status: 500 });

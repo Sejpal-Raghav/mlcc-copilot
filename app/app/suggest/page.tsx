@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { Search, AlertCircle, Cpu } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function SuggestPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setCandidates([]);
+    setHistory([]);
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -32,6 +35,9 @@ export default function SuggestPage() {
       const resData = await res.json();
       if (resData.candidates && Array.isArray(resData.candidates)) {
         setCandidates(resData.candidates);
+      }
+      if (resData.history && Array.isArray(resData.history)) {
+        setHistory(resData.history);
       }
       
       if (!res.ok) throw new Error(resData.error || "Search failed");
@@ -135,6 +141,23 @@ export default function SuggestPage() {
               <div className="text-center">
                 <Search className="w-8 h-8 text-zinc-200 mx-auto mb-3" />
                 <div className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">Waiting for constraints</div>
+              </div>
+            </div>
+          )}
+
+          {history.length > 0 && (
+            <div className="mt-6 bg-white border border-zinc-200 p-4">
+              <h4 className="text-[10px] uppercase tracking-widest font-semibold text-zinc-500 mb-3 border-b border-zinc-100 pb-2">Optimizer Convergence (Loss vs Iterations)</h4>
+              <div className="h-48 mt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={history}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" />
+                    <XAxis dataKey="iteration" tick={{fontSize: 10}} tickLine={false} axisLine={false} />
+                    <YAxis tick={{fontSize: 10}} tickLine={false} axisLine={false} tickFormatter={(val) => val.toExponential(1)} />
+                    <Tooltip contentStyle={{fontSize: '12px', border: '1px solid #e4e4e7', borderRadius: '4px', boxShadow: 'none'}} formatter={(val: number) => val.toExponential(3)} labelFormatter={(lbl) => `Iteration ${lbl}`} />
+                    <Line type="monotone" dataKey="loss" stroke="#18181b" strokeWidth={2} dot={false} animationDuration={1000} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           )}
